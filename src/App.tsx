@@ -3,13 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { COLLEGES, POPULAR_LOCATIONS, getCoordinatesFromPincode, getHaversineDistance } from './data';
 import { College, GeocodedLocation, SearchCriteria } from './types';
 import MapIndicator from './components/MapIndicator';
 import DashboardCharts from './components/DashboardCharts';
 import MetricCards from './components/MetricCards';
+import SalesSimulatorView from './components/SalesSimulatorView';
+import { augmentCollege } from './data/collegeAugmentations';
+import { OBJECTIONS, COUNSELLING_STEPS, PROFILING_QUESTIONS } from './data/trainingData';
 import { 
   Search, 
   Filter, 
@@ -30,7 +33,23 @@ import {
   ShieldCheck,
   CheckCircle,
   HelpCircle,
-  Trash2
+  Trash2,
+  MessageSquare,
+  AlertTriangle,
+  Play,
+  Volume2,
+  Settings,
+  Sparkles,
+  RefreshCw,
+  Sliders,
+  Plus,
+  X,
+  ChevronDown,
+  Check,
+  Lock,
+  ChevronRight,
+  Map,
+  DollarSign
 } from 'lucide-react';
 
 const CONTACT_AND_HELP_INFO: Record<string, {
@@ -328,6 +347,84 @@ export function getCourseDescription(prName: string): string {
 }
 
 export default function App() {
+  // --- Sales Simulator & AI Config States ---
+  const [activeView, setActiveView] = useState<'navigator' | 'simulator'>('navigator');
+
+  const [leadName, setLeadName] = useState<string>(() => localStorage.getItem('sim_lead_name') || 'Rohit');
+  const [leadRelation, setLeadRelation] = useState<'Student' | 'Parent'>(() => {
+    const stored = localStorage.getItem('sim_lead_relation');
+    return (stored === 'Student' || stored === 'Parent') ? stored : 'Student';
+  });
+  const [counsellorName, setCounsellorName] = useState<string>(() => localStorage.getItem('sim_counsellor_name') || 'Maya');
+  const [leadLocation, setLeadLocation] = useState<string>(() => localStorage.getItem('sim_lead_location') || 'Pune');
+  const [leadPincode, setLeadPincode] = useState<string>(() => localStorage.getItem('sim_lead_pincode') || '411057');
+  
+  // Student Background Profiling States
+  const [lead12thStream, setLead12thStream] = useState<'PCB' | 'PCM' | 'Commerce' | 'Arts' | 'Other'>(() => (localStorage.getItem('sim_lead_12th_stream') as any) || 'PCB');
+  const [lead12thMarks, setLead12thMarks] = useState<number>(() => Number(localStorage.getItem('sim_lead_12th_marks')) || 75);
+  const [leadExamStatus, setLeadExamStatus] = useState<'None' | 'NEET' | 'CET' | 'Both'>(() => (localStorage.getItem('sim_lead_exam_status') as any) || 'NEET');
+  const [leadExamScore, setLeadExamScore] = useState<number>(() => Number(localStorage.getItem('sim_lead_exam_score')) || 320);
+  
+  // AI Keys & Provider Configs
+  const [modelProvider, setModelProvider] = useState<'local' | 'groq' | 'openrouter'>(() => (localStorage.getItem('sim_model_provider') as any) || 'local');
+  const [modelApiKey, setModelApiKey] = useState<string>(() => localStorage.getItem('sim_model_api_key') || '');
+  const [selectedModel, setSelectedModel] = useState<string>(() => localStorage.getItem('sim_selected_model') || 'meta-llama/llama-3.3-70b-instruct:free');
+  const [aiTemperature, setAiTemperature] = useState<number>(() => Number(localStorage.getItem('sim_ai_temperature')) || 0.7);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  
+  // Active Simulation Workflow
+  const [currentCounsellingStep, setCurrentCounsellingStep] = useState<number>(1);
+  const [activeConflictObjectionId, setActiveConflictObjectionId] = useState<number | null>(null);
+  const [conflictSearchQuery, setConflictSearchQuery] = useState<string>('');
+  const [conflictSelectedCategory, setConflictSelectedCategory] = useState<string>('All');
+  
+  // AI Speech caching
+  const [customAISpeechVariants, setCustomAISpeechVariants] = useState<Record<number, string>>({});
+  const [customAIObjectionVariants, setCustomAIObjectionVariants] = useState<Record<number, string>>({});
+  const [isAiLoading, setIsAiLoading] = useState<boolean>(false);
+  const [aiErrorMessage, setAiErrorMessage] = useState<string>('');
+
+  // Persist hooks
+  useEffect(() => {
+    localStorage.setItem('sim_lead_name', leadName);
+  }, [leadName]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_relation', leadRelation);
+  }, [leadRelation]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_12th_stream', lead12thStream);
+  }, [lead12thStream]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_12th_marks', String(lead12thMarks));
+  }, [lead12thMarks]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_exam_status', leadExamStatus);
+  }, [leadExamStatus]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_exam_score', String(leadExamScore));
+  }, [leadExamScore]);
+  useEffect(() => {
+    localStorage.setItem('sim_counsellor_name', counsellorName);
+  }, [counsellorName]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_location', leadLocation);
+  }, [leadLocation]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_pincode', leadPincode);
+  }, [leadPincode]);
+  useEffect(() => {
+    localStorage.setItem('sim_model_provider', modelProvider);
+  }, [modelProvider]);
+  useEffect(() => {
+    localStorage.setItem('sim_model_api_key', modelApiKey);
+  }, [modelApiKey]);
+  useEffect(() => {
+    localStorage.setItem('sim_selected_model', selectedModel);
+  }, [selectedModel]);
+  useEffect(() => {
+    localStorage.setItem('sim_ai_temperature', aiTemperature.toString());
+  }, [aiTemperature]);
+
   // 1. Core Proximity search states
   const [searchInput, setSearchInput] = useState<string>('');
   const [searchedLocation, setSearchedLocation] = useState<GeocodedLocation | null>(null);
@@ -359,7 +456,12 @@ export default function App() {
   // 3. Selection & Sorting states
   const [selectedCollege, setSelectedCollege] = useState<College | null>(COLLEGES[0]);
   const [sortBy, setSortBy] = useState<'distance' | 'fee' | 'intake' | 'placement' | 'name'>('name');
-  const [parentTab, setParentTab] = useState<'finance' | 'hostel' | 'academics' | 'contact'>('finance');
+  const [parentTab, setParentTab] = useState<'finance' | 'hostel' | 'academics' | 'contact' | 'csv_specs'>('finance');
+
+  // Dynamic CSV content merger
+  const augCollege = useMemo(() => {
+    return selectedCollege ? augmentCollege(selectedCollege) : null;
+  }, [selectedCollege]);
 
   // Compute available states and programs dynamically from colleges dataset
   const uniqueStates = useMemo(() => {
@@ -843,20 +945,52 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quick links to credentials support */}
-          <div className="flex items-center gap-4 text-xs font-medium">
-            <a 
-              href="https://emversity.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[#a1a1aa] hover:text-[#f59e0b] transition-colors"
+          {/* Global Page Switcher & Settings */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Switche Tab Deck */}
+            <div className="flex items-center bg-[#18181b] border border-[#27272a] rounded-xl p-1 gap-1 shadow-inner overflow-hidden">
+              <button
+                onClick={() => setActiveView('navigator')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                  activeView === 'navigator'
+                    ? 'bg-[#f59e0b] text-black font-extrabold shadow-md'
+                    : 'text-[#a1a1aa] hover:text-white'
+                }`}
+              >
+                <Compass className="w-4 h-4" />
+                1. Campus Matchmaker
+              </button>
+              <button
+                onClick={() => setActiveView('simulator')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                  activeView === 'simulator'
+                    ? 'bg-[#f59e0b] text-black font-extrabold shadow-md'
+                    : 'text-[#a1a1aa] hover:text-white'
+                }`}
+              >
+                <MessageSquare className="w-4 h-4" />
+                2. Objection Practice Simulator
+              </button>
+            </div>
+
+            <span className="text-[#27272a] hidden sm:inline">|</span>
+
+            {/* AI Control Buttons */}
+            <button
+              onClick={() => setShowSettingsModal(true)}
+              className="p-2 border border-[#3f3f46] hover:border-[#f59e0b] bg-[#18181b] hover:bg-[#27272a]/50 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer relative"
+              title="Configure Groq / OpenRouter AI Keys"
             >
-              Emversity Partner List <ExternalLink className="w-3 h-3" />
-            </a>
-            <span className="text-[#27272a]">|</span>
-            <div className="flex items-center gap-1.5 text-[#f59e0b] font-semibold bg-[#27272a]/50 border border-[#f59e0b]/20 rounded-full px-2.5 py-0.5">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Admission Batch 2026 Live
+              <Settings className="w-4 h-4 text-[#f59e0b] animate-spin-slow" />
+              <span className="hidden sm:inline">LLM Settings</span>
+              {modelProvider !== 'local' && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
+              )}
+            </button>
+
+            <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#a1a1aa] bg-[#27272a]/20 border border-[#27272a] rounded-full px-3 py-1 font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#10b981]" />
+              Admission 2026 Batch Active
             </div>
           </div>
         </div>
@@ -864,7 +998,9 @@ export default function App() {
 
       {/* 2. Top Metric Boards */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
-        <MetricCards colleges={COLLEGES} />
+        {activeView === 'navigator' ? (
+          <>
+            <MetricCards colleges={COLLEGES} />
 
         {/* 3. Interactive Location & College Selection Core */}
         <section className="border border-[#27272a] bg-[#111113] shadow-lg rounded-3xl p-6 relative overflow-hidden">
@@ -1542,7 +1678,8 @@ export default function App() {
                         { id: 'finance', label: '💳 Financial & Bank Support', icon: Coins },
                         { id: 'hostel', label: '🏡 Hostel & Transit', icon: Home },
                         { id: 'academics', label: '📚 Careers & ROI', icon: GraduationCap },
-                        { id: 'contact', label: '📞 Helpdesk Hotlines', icon: Phone }
+                        { id: 'contact', label: '📞 Helpdesk Hotlines', icon: Phone },
+                        { id: 'csv_specs', label: '✨ Deep CSV Specs', icon: Sparkles }
                       ].map((tab) => {
                         const IconComponent = tab.icon;
                         const isCurrent = parentTab === tab.id;
@@ -1718,6 +1855,91 @@ export default function App() {
                         </div>
                       )}
 
+                      {parentTab === 'csv_specs' && augCollege && (
+                        <div className="space-y-4">
+                          <div className="p-4 bg-[#f59e0b]/5 border border-[#f59e0b]/15 rounded-xl">
+                            <h5 className="font-bold text-[#f59e0b] mb-1.5 flex items-center gap-1.5 text-xs">
+                              <Sparkles className="w-4 h-4 text-[#f59e0b]" />
+                              Comprehensive Compliance Specifications (main.csv Repo)
+                            </h5>
+                            <p className="text-[11px] text-[#a1a1aa] leading-relaxed font-sans">
+                              Detailed compliance variables recorded directly for the 2026 academic admissions ledger. All properties below are mapped directly from the verified institutional contract data.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px]">
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block">🎓 University Founder</span>
+                              <p className="text-white font-semibold text-xs">{augCollege.founders || "Academic Board Representative"}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block">📅 Batch Commencement</span>
+                              <p className="text-white font-semibold text-xs">{augCollege.batchStart || "August 2026 Intake"}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block">⏱️ Campus Office Timings</span>
+                              <p className="text-[#a1a1aa] text-xs font-medium">{augCollege.officeTiming || "10:00 AM to 4:00 PM (Monday-Saturday)"}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block">🔄 Refund & Token Cancellation</span>
+                              <p className="text-[#a1a1aa] text-xs">{augCollege.tokenFeesRefundStatus || "Subject to UGC / private institutional refund statutes."}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1 md:col-span-2">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block font-sans">🔞 Age Criteria & Academic Career Gaps</span>
+                              <p className="text-[#a1a1aa] text-xs leading-relaxed">{augCollege.ageCriteriaAndCareerGap || "Standard age and gap clearances as defined by UGC guidelines."}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1 md:col-span-2">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block font-sans">📊 Year On Year Fee Schedule</span>
+                              <p className="text-[#f59e0b] font-mono font-medium text-xs leading-relaxed">{augCollege.yearOnYearFees || "Tuition fee structure is spread even across standard academic semestrals."}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block font-sans">🏥 Clinical Internship Support</span>
+                              <p className="text-[#a1a1aa] text-xs">{augCollege.internshipSupport || "Yes, 1-year mandatory clinical hospital internship in third/fourth year."}</p>
+                            </div>
+
+                            <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
+                              <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block font-sans">⚡ Bridge & Prep Course Clearance</span>
+                              <p className="text-[#a1a1aa] text-xs">{augCollege.bridgeFeeMandatory || "Standard ₹30,000 INR Non-Refundable Bridge & Skilling Course applies."}</p>
+                            </div>
+                          </div>
+
+                          {/* Interactive Roster links */}
+                          <div className="p-4 bg-[#141416] rounded-xl border border-[#27272a] space-y-3">
+                            <h6 className="text-[11px] font-bold text-white uppercase tracking-wider font-mono">🔗 Official Digital Portals</h6>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              {augCollege.universityWebsiteLink && (
+                                <a
+                                  href={augCollege.universityWebsiteLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-grow py-2 px-3 text-center bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] border border-[#3f3f46] rounded-lg font-semibold text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+                                  University Main Portal
+                                </a>
+                              )}
+                              {augCollege.emversityWebsiteLink && (
+                                <a
+                                  href={augCollege.emversityWebsiteLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-grow py-2 px-3 text-center bg-[#f59e0b]/10 hover:bg-[#f59e0b]/20 text-[#f59e0b] border border-[#f59e0b]/20 rounded-lg font-semibold text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5 text-[#f59e0b]" />
+                                  Emversity Affiliation Page
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                     </div>
                   </div>
 
@@ -1802,6 +2024,55 @@ export default function App() {
             </motion.section>
           )}
         </AnimatePresence>
+          </>
+        ) : (
+          <SalesSimulatorView
+            leadName={leadName}
+            setLeadName={setLeadName}
+            leadRelation={leadRelation}
+            setLeadRelation={setLeadRelation}
+            counsellorName={counsellorName}
+            setCounsellorName={setCounsellorName}
+            leadLocation={leadLocation}
+            setLeadLocation={setLeadLocation}
+            leadPincode={leadPincode}
+            setLeadPincode={setLeadPincode}
+            lead12thStream={lead12thStream}
+            setLead12thStream={setLead12thStream}
+            lead12thMarks={lead12thMarks}
+            setLead12thMarks={setLead12thMarks}
+            leadExamStatus={leadExamStatus}
+            setLeadExamStatus={setLeadExamStatus}
+            leadExamScore={leadExamScore}
+            setLeadExamScore={setLeadExamScore}
+            modelProvider={modelProvider}
+            setModelProvider={setModelProvider}
+            modelApiKey={modelApiKey}
+            setModelApiKey={setModelApiKey}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
+            aiTemperature={aiTemperature}
+            setAiTemperature={setAiTemperature}
+            showSettingsModal={showSettingsModal}
+            setShowSettingsModal={setShowSettingsModal}
+            currentCounsellingStep={currentCounsellingStep}
+            setCurrentCounsellingStep={setCurrentCounsellingStep}
+            activeConflictObjectionId={activeConflictObjectionId}
+            setActiveConflictObjectionId={setActiveConflictObjectionId}
+            conflictSearchQuery={conflictSearchQuery}
+            setConflictSearchQuery={setConflictSearchQuery}
+            conflictSelectedCategory={conflictSelectedCategory}
+            setConflictSelectedCategory={setConflictSelectedCategory}
+            customAISpeechVariants={customAISpeechVariants}
+            setCustomAISpeechVariants={setCustomAISpeechVariants}
+            customAIObjectionVariants={customAIObjectionVariants}
+            setCustomAIObjectionVariants={setCustomAIObjectionVariants}
+            isAiLoading={isAiLoading}
+            setIsAiLoading={setIsAiLoading}
+            aiErrorMessage={aiErrorMessage}
+            setAiErrorMessage={setAiErrorMessage}
+          />
+        )}
       </main>
 
       {/* Structured Footer */}

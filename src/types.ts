@@ -43,6 +43,18 @@ export interface College {
   loanDetails?: string;
   fstStaff?: string;
   ismManager?: string;
+  // Deep details from main.csv
+  ageCriteriaAndCareerGap?: string;
+  yearOnYearFees?: string;
+  remarksAdditionalDetails?: string;
+  tokenFeesRefundStatus?: string;
+  officeTiming?: string;
+  batchStart?: string;
+  founders?: string;
+  universityWebsiteLink?: string;
+  emversityWebsiteLink?: string;
+  bridgeFeeMandatory?: string;
+  internshipSupport?: string;
 }
 
 export interface GeocodedLocation {
