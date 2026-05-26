@@ -1,0 +1,10 @@
+{
+  "name": "Emversity Campus Navigator",
+  "description": "An interactive college selection dashboard with dynamic charts, filterable tables, other criteria searching, and proximity calculation to pinpoint the nearest colleges to a searched city or pin code with map visualization.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
