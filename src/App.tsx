@@ -364,6 +364,7 @@ export default function App() {
   const [lead12thMarks, setLead12thMarks] = useState<number>(() => Number(localStorage.getItem('sim_lead_12th_marks')) || 75);
   const [leadExamStatus, setLeadExamStatus] = useState<'None' | 'NEET' | 'CET' | 'Both'>(() => (localStorage.getItem('sim_lead_exam_status') as any) || 'NEET');
   const [leadExamScore, setLeadExamScore] = useState<number>(() => Number(localStorage.getItem('sim_lead_exam_score')) || 320);
+  const [leadProgramInterest, setLeadProgramInterest] = useState<string>(() => localStorage.getItem('sim_lead_program_interest') || 'All');
   
   // AI Keys & Provider Configs
   const [modelProvider, setModelProvider] = useState<'local' | 'groq' | 'openrouter'>(() => (localStorage.getItem('sim_model_provider') as any) || 'local');
@@ -403,6 +404,9 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('sim_lead_exam_score', String(leadExamScore));
   }, [leadExamScore]);
+  useEffect(() => {
+    localStorage.setItem('sim_lead_program_interest', leadProgramInterest);
+  }, [leadProgramInterest]);
   useEffect(() => {
     localStorage.setItem('sim_counsellor_name', counsellorName);
   }, [counsellorName]);
@@ -2045,6 +2049,8 @@ export default function App() {
             setLeadExamStatus={setLeadExamStatus}
             leadExamScore={leadExamScore}
             setLeadExamScore={setLeadExamScore}
+            leadProgramInterest={leadProgramInterest}
+            setLeadProgramInterest={setLeadProgramInterest}
             modelProvider={modelProvider}
             setModelProvider={setModelProvider}
             modelApiKey={modelApiKey}
@@ -2079,7 +2085,7 @@ export default function App() {
       <footer className="mt-16 border-t border-[#27272a] bg-[#09090b] py-12 text-[#71717a] text-xs text-center font-mono">
         <div className="max-w-7xl mx-auto px-4 space-y-3 font-sans">
           <p className="font-sans font-medium text-[#a1a1aa]">
-            © 2026 Emversity Campus Navigator. All rights reserved.
+            © 2026 Emversity Campus Navigator. All rights reserved by Muzaffar Munshi.
           </p>
           <p className="max-w-xl mx-auto leading-relaxed text-[10px] text-[#52525b]">
             Precision distance calculation based on geodesic tracking models. Values represented reflect tentative academic calendars, batch registries, and program catalogs as of admission year 2026.

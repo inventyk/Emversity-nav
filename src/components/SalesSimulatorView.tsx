@@ -7,6 +7,134 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { OBJECTIONS, COUNSELLING_STEPS, Objection, CounsellingStep, PROFILING_QUESTIONS } from '../data/trainingData';
 import { COLLEGES, getCoordinatesFromPincode, getHaversineDistance } from '../data';
+
+// Comprehensive dictionary specifying exactly which cities mapped to coordinates belong to which state, to ensure state-aware lookups.
+const STATE_CITIES_COORDS: Record<string, Record<string, { name: string, lat: number, lng: number }>> = {
+  "Maharashtra": {
+    "nashik": { name: "Nashik, Maharashtra", lat: 19.9975, lng: 73.7898 },
+    "nasik": { name: "Nashik, Maharashtra", lat: 19.9975, lng: 73.7898 },
+    "mumbai": { name: "Mumbai, Maharashtra", lat: 19.0760, lng: 72.8777 },
+    "pune": { name: "Pune, Maharashtra", lat: 18.5204, lng: 73.8567 },
+    "solapur": { name: "Solapur, Maharashtra", lat: 17.6599, lng: 75.9064 },
+    "kopargaon": { name: "Kopargaon, Maharashtra", lat: 19.9010, lng: 74.4949 },
+    "shirdi": { name: "Shirdi, Maharashtra", lat: 19.7691, lng: 74.4080 },
+    "ahmednagar": { name: "Ahmednagar, Maharashtra", lat: 19.0948, lng: 74.7480 },
+    "vasai": { name: "Vasai, Maharashtra", lat: 19.3504, lng: 72.9170 },
+    "nagpur": { name: "Nagpur, Maharashtra", lat: 21.1458, lng: 79.0882 },
+    "thane": { name: "Thane, Maharashtra", lat: 19.2183, lng: 72.9781 }
+  },
+  "Karnataka": {
+    "bangalore": { name: "Bengaluru, Karnataka", lat: 12.9716, lng: 77.5946 },
+    "bengaluru": { name: "Bengaluru, Karnataka", lat: 12.9716, lng: 77.5946 },
+    "hubli": { name: "Hubballi, Karnataka", lat: 15.3647, lng: 75.1242 },
+    "hubballi": { name: "Hubballi, Karnataka", lat: 15.3647, lng: 75.1242 },
+    "mangalore": { name: "Mangaluru, Karnataka", lat: 12.9141, lng: 74.8560 },
+    "mysore": { name: "Mysuru, Karnataka", lat: 12.2958, lng: 76.6394 }
+  },
+  "Tamil Nadu": {
+    "chennai": { name: "Chennai, Tamil Nadu", lat: 13.0827, lng: 80.2707 },
+    "coimbatore": { name: "Coimbatore, Tamil Nadu", lat: 11.0168, lng: 76.9558 }
+  },
+  "Telangana": {
+    "hyderabad": { name: "Hyderabad, Telangana", lat: 17.3850, lng: 78.4867 },
+    "sangareddy": { name: "Sangareddy, Telangana", lat: 17.6253, lng: 78.0494 }
+  },
+  "West Bengal": {
+    "kolkata": { name: "Kolkata, West Bengal", lat: 22.5726, lng: 88.3639 }
+  },
+  "Uttarakhand": {
+    "dehradun": { name: "Dehradun, Uttarakhand", lat: 30.3165, lng: 78.0322 }
+  },
+  "Jharkhand": {
+    "jamshedpur": { name: "Jamshedpur, Jharkhand", lat: 22.8046, lng: 86.2029 },
+    "ranchi": { name: "Ranchi, Jharkhand", lat: 23.3441, lng: 85.3091 }
+  },
+  "Haryana": {
+    "gurugram": { name: "Gurugram, Haryana", lat: 28.4595, lng: 77.0266 },
+    "faridabad": { name: "Faridabad, Haryana", lat: 28.4089, lng: 77.3178 }
+  },
+  "Punjab": {
+    "mohali": { name: "Mohali, Punjab", lat: 30.6953, lng: 76.6575 },
+    "phagwara": { name: "Phagwara, Punjab", lat: 31.2536, lng: 75.7057 },
+    "amritsar": { name: "Amritsar, Punjab", lat: 31.6340, lng: 74.8723 }
+  },
+  "Uttar Pradesh": {
+    "allahabad": { name: "Allahabad, Uttar Pradesh", lat: 25.4358, lng: 81.8463 },
+    "lucknow": { name: "Lucknow, Uttar Pradesh", lat: 26.8467, lng: 80.9462 },
+    "kanpur": { name: "Kanpur, Uttar Pradesh", lat: 26.4499, lng: 80.3319 }
+  },
+  "Sikkim": {
+    "singtam": { name: "Singtam, Sikkim", lat: 27.2354, lng: 88.4988 }
+  },
+  "Madhya Pradesh": {
+    "indore": { name: "Indore, Madhya Pradesh", lat: 22.7196, lng: 75.8577 },
+    "bhopal": { name: "Bhopal, Madhya Pradesh", lat: 23.2599, lng: 77.4126 }
+  },
+  "Jammu & Kashmir": {
+    "kashmir": { name: "Kashmir Region, J&K", lat: 34.0837, lng: 74.7973 },
+    "kasmir": { name: "Kashmir Region, J&K", lat: 34.0837, lng: 74.7973 },
+    "srinagar": { name: "Srinagar, J&K", lat: 34.0837, lng: 74.7973 },
+    "jammu": { name: "Jammu, J&K", lat: 32.7266, lng: 74.8570 }
+  },
+  "Kerala": {
+    "kerala": { name: "Kerala Region", lat: 9.9312, lng: 76.2673 },
+    "kochi": { name: "Kochi, Kerala", lat: 9.9312, lng: 76.2673 },
+    "erjanakulam": { name: "Ernakulam, Kerala", lat: 9.9816, lng: 76.2998 },
+    "ernakulam": { name: "Ernakulam, Kerala", lat: 9.9816, lng: 76.2998 },
+    "trivandrum": { name: "Thiruvananthapuram, Kerala", lat: 8.5241, lng: 76.9366 },
+    "thiruvananthapuram": { name: "Thiruvananthapuram, Kerala", lat: 8.5241, lng: 76.9366 }
+  },
+  "Goa": {
+    "goa": { name: "Goa Region", lat: 15.4909, lng: 73.8278 },
+    "panaji": { name: "Panaji, Goa", lat: 15.4909, lng: 73.8278 },
+    "margao": { name: "Margao, Goa", lat: 15.1509, lng: 73.9855 }
+  },
+  "Delhi": {
+    "delhi": { name: "Delhi & NCR Region", lat: 28.6139, lng: 77.2090 },
+    "new delhi": { name: "New Delhi", lat: 28.6139, lng: 77.2090 },
+    "noida": { name: "Noida, NCR", lat: 28.5355, lng: 77.3910 }
+  },
+  "Gujarat": {
+    "gujarat": { name: "Gujarat Region", lat: 23.0225, lng: 72.5714 },
+    "ahmedabad": { name: "Ahmedabad, Gujarat", lat: 23.0225, lng: 72.5714 },
+    "surat": { name: "Surat, Gujarat", lat: 21.1702, lng: 72.8311 },
+    "vadodara": { name: "Vadodara, Gujarat", lat: 22.3072, lng: 73.1812 }
+  },
+  "Rajasthan": {
+    "rajasthan": { name: "Rajasthan Region", lat: 26.9124, lng: 75.7873 },
+    "jaipur": { name: "Jaipur, Rajasthan", lat: 26.9124, lng: 75.7873 },
+    "jodhpur": { name: "Jodhpur, Rajasthan", lat: 26.2389, lng: 73.0243 },
+    "udaipur": { name: "Udaipur, Rajasthan", lat: 24.5854, lng: 73.7125 }
+  },
+  "Bihar": {
+    "bihar": { name: "Bihar Region", lat: 25.5941, lng: 85.1376 },
+    "patna": { name: "Patna, Bihar", lat: 25.5941, lng: 85.1376 }
+  },
+  "Odisha": {
+    "odisha": { name: "Odisha Region", lat: 20.2961, lng: 85.8245 },
+    "orissa": { name: "Odisha Region", lat: 20.2961, lng: 85.8245 },
+    "bhubaneswar": { name: "Bhubaneswar, Odisha", lat: 20.2961, lng: 85.8245 }
+  },
+  "Assam": {
+    "assam": { name: "Assam Region", lat: 26.1158, lng: 91.7086 },
+    "guwahati": { name: "Guwahati, Assam", lat: 26.1158, lng: 91.7086 },
+    "northeast": { name: "North East Region", lat: 26.1158, lng: 91.7086 }
+  },
+  "Himachal Pradesh": {
+    "himachal": { name: "Himachal Pradesh", lat: 31.1048, lng: 77.1734 },
+    "shimla": { name: "Shimla, HP", lat: 31.1048, lng: 77.1734 }
+  },
+  "Andhra Pradesh": {
+    "andhra": { name: "Andhra Pradesh", lat: 16.5062, lng: 80.6480 },
+    "ap": { name: "Andhra Pradesh", lat: 16.5062, lng: 80.6480 },
+    "vijayawada": { name: "Vijayawada, AP", lat: 16.5062, lng: 80.6480 },
+    "visakhapatnam": { name: "Visakhapatnam, AP", lat: 17.6868, lng: 83.2185 }
+  },
+  "Chhattisgarh": {
+    "chhattisgarh": { name: "Chhattisgarh", lat: 21.2514, lng: 81.6296 },
+    "raipur": { name: "Raipur, Chhattisgarh", lat: 21.2514, lng: 81.6296 }
+  }
+};
 import { 
   Play, 
   Volume2, 
@@ -77,6 +205,8 @@ interface SalesSimulatorViewProps {
   setIsAiLoading: (v: boolean) => void;
   aiErrorMessage: string;
   setAiErrorMessage: (v: string) => void;
+  leadProgramInterest: string;
+  setLeadProgramInterest: (v: string) => void;
 }
 
 const GROQ_MODELS = [
@@ -93,6 +223,44 @@ const OPENROUTER_MODELS = [
   { id: 'microsoft/phi-3-medium-128k-instruct:free', name: 'Phi 3 Medium 128k (Free)' },
   { id: 'anthropic/claude-3-haiku', name: 'Claude 3 Haiku (Paid - Elite)' },
 ];
+
+const PROGRAM_INFOS: Record<string, { name: string; descEn: string; descHi: string }> = {
+  All: {
+    name: "Allied Health Sciences",
+    descEn: "specialized medical fields like Medical Lab Science, Operation Theatre, Imaging, Emergency Care, and Physiotherapy, which form the back-bone of any modern hospital and handle 80% of clinical operations.",
+    descHi: "specialized medical fields jaise Medical Lab Science, Operation Theatre, Imaging, Emergency Care, aur Physiotherapy, jo kisi bhi modern hospital ki back-bone hote hain aur 80% clinical operations ko handle karte hain."
+  },
+  'A&OTT': {
+    name: "Anaesthesia & Operation Theatre Technology (A&OTT)",
+    descEn: "critical care support, drug dose preparation, and high-tech surgical machinery setup in active Operation Theatres to assist surgeons during complex surgeries.",
+    descHi: "critical care support, anesthesia dose preparation, aur high-tech surgical machinery setup Operation Theatre me, jo complex surgeries ke waqt surgeons ko closely assist karta hai."
+  },
+  CVT: {
+    name: "Cardiovascular Technology (CVT)",
+    descEn: "diagnosing and monitoring heart-related disorders, operating high-end ECG and cath-lab equipment, and supporting cardiac teams in life-saving heart procedures.",
+    descHi: "heart-related disorders ko diagnose aur monitor karna, high-end ECG aur cath-lab machines operate karna, aur life-saving heart operations me cardiac teams ko support karna."
+  },
+  MLS: {
+    name: "Medical Laboratory Science (MLS)",
+    descEn: "conducting precise clinical pathology lab tests, chemical body-fluid analysis, and molecular diagnostics to trace and identify critical infections or blood disorders.",
+    descHi: "precise clinical pathology lab tests karna, chemical body-fluid screening aur molecular diagnostics conduct karna taaki critical infections aur blood diseases identify ho sakein."
+  },
+  MRIT: {
+    name: "Medical Radiology & Imaging Technology (MRIT)",
+    descEn: "operating high-tech diagnostic imagers like MRI, CT Scan, X-Ray, and Ultrasound systems, and analyzing anatomical visuals to diagnose precise internal illnesses.",
+    descHi: "high-tech diagnostic imaging equipment jaise MRI, CT Scan, X-Ray, aur Ultrasound machines operate karna aur anatomical pictures analyze karke body ke andar ki illness confirm karna."
+  },
+  BPT: {
+    name: "Physiotherapy (BPT)",
+    descEn: "treating muscular and skeletal recovery, rehabilitation therapy, post-accident trauma healing, and dynamic sports injury alignments using advanced therapeutic exercises.",
+    descHi: "muscular aur skeletal recovery treatment, physical rehabilitation training, post-accident movement recovery, aur sports injury recovery advanced exercises ke through coordinate karna."
+  },
+  EMT: {
+    name: "Emergency Medical Technology (EMT)",
+    descEn: "first-responder trauma medicine, rapid ambulance operations, critical emergency room stabilizing acts, and immediate life-support procedures for critical patients.",
+    descHi: "first-responder trauma service, fast ambulance logistics, critical emergency ICU stabilization, aur life-saving immediate treatment procedures critical patients ke liye manage karna."
+  }
+};
 
 export default function SalesSimulatorView({
   leadName,
@@ -139,6 +307,8 @@ export default function SalesSimulatorView({
   setIsAiLoading,
   aiErrorMessage,
   setAiErrorMessage,
+  leadProgramInterest,
+  setLeadProgramInterest,
 }: SalesSimulatorViewProps) {
   
   const [selectedLanguage, setSelectedLanguage] = useState<'English' | 'Hindi'>(() => (localStorage.getItem('sim_selected_language') as any) || 'English');
@@ -146,9 +316,48 @@ export default function SalesSimulatorView({
   const [speakingText, setSpeakingText] = useState<string | null>(null);
   const [testConnectionStatus, setTestConnectionStatus] = useState<'idle' | 'success' | 'failed'>('idle');
 
+  const [simStateFilter, setSimStateFilter] = useState<string>(() => localStorage.getItem('sim_state_filter') || 'All');
+  const [simFocusOnlyFilter, setSimFocusOnlyFilter] = useState<boolean>(() => localStorage.getItem('sim_focus_only') !== 'false');
+
+  React.useEffect(() => {
+    localStorage.setItem('sim_state_filter', simStateFilter);
+  }, [simStateFilter]);
+
+  React.useEffect(() => {
+    localStorage.setItem('sim_focus_only', String(simFocusOnlyFilter));
+  }, [simFocusOnlyFilter]);
+
+  const simulatorStates = useMemo(() => {
+    const states = Array.from(new Set(COLLEGES.map(c => c.state))).filter(Boolean).sort();
+    return states;
+  }, []);
+
   const [simSearchInput, setSimSearchInput] = useState<string>(leadLocation || '');
   const [isSimGeocoding, setIsSimGeocoding] = useState<boolean>(false);
   const [simGeocodeError, setSimGeocodeError] = useState<string>('');
+  
+  // Track precise geocoded coordinates exactly like Campus Matchmaker
+  const [simSearchedLocation, setSimSearchedLocation] = useState<{
+    name: string;
+    lat: number;
+    lng: number;
+    type?: string;
+  } | null>(null);
+
+  // Initialize simSearchedLocation from initial leadPincode / leadLocation props
+  React.useEffect(() => {
+    if (!simSearchedLocation) {
+      let coords = getCoordinatesFromPincode(leadPincode);
+      if (!coords) {
+        coords = { name: leadLocation || 'Pune, Maharashtra', lat: 18.5204, lng: 73.8567 };
+      }
+      setSimSearchedLocation({
+        name: coords.name,
+        lat: coords.lat,
+        lng: coords.lng
+      });
+    }
+  }, [leadPincode, leadLocation]);
 
   React.useEffect(() => {
     if (leadLocation && !simSearchInput) {
@@ -170,12 +379,38 @@ export default function SalesSimulatorView({
       if (pinResult) {
         setLeadLocation(pinResult.name.split(',')[0]);
         setLeadPincode(pinDigits);
+        setSimSearchedLocation({
+          name: pinResult.name,
+          lat: pinResult.lat,
+          lng: pinResult.lng,
+          type: 'pincode'
+        });
         setIsSimGeocoding(false);
         return;
       }
     }
 
-    // B) Always search across states and cities in our static dictionary or database
+    // B) Always search across all states and cities first in our high-fidelity static dictionary globally
+    for (const st of Object.keys(STATE_CITIES_COORDS)) {
+      const citiesMap = STATE_CITIES_COORDS[st];
+      const foundCityKey = Object.keys(citiesMap).find(cityKey => 
+        cleanQuery === cityKey || cleanQuery.includes(cityKey) || cityKey.includes(cleanQuery)
+      );
+      if (foundCityKey) {
+        const matched = citiesMap[foundCityKey];
+        setLeadLocation(matched.name.split(',')[0]);
+        setSimSearchedLocation({
+          name: matched.name,
+          lat: matched.lat,
+          lng: matched.lng,
+          type: 'city'
+        });
+        setIsSimGeocoding(false);
+        return;
+      }
+    }
+
+    // C) Search matches in COLLEGE names and addresses
     const matchedCol = COLLEGES.find(
       c => c.name.toLowerCase().includes(cleanQuery) ||
            c.city.toLowerCase().includes(cleanQuery) ||
@@ -190,12 +425,19 @@ export default function SalesSimulatorView({
         'thane': '400601',
         'kopargaon': '423601'
       };
-      setLeadPincode(defaultPincodes[matchedCol.city.toLowerCase()] || '411057');
+      const usePin = defaultPincodes[matchedCol.city.toLowerCase()] || '411057';
+      setLeadPincode(usePin);
+      setSimSearchedLocation({
+        name: `${matchedCol.city}, ${matchedCol.state}`,
+        lat: matchedCol.lat,
+        lng: matchedCol.lng,
+        type: 'city'
+      });
       setIsSimGeocoding(false);
       return;
     }
 
-    // C) OpenStreetMap Nominatim Dynamic Geocoding live API fetch (with automatic fast abort timeout)
+    // D) OpenStreetMap Nominatim Dynamic Geocoding live API fetch (with automatic fast abort timeout)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2500);
 
@@ -212,12 +454,20 @@ export default function SalesSimulatorView({
       if (Array.isArray(data) && data.length > 0) {
         const item = data[0];
         const displayName = item.display_name.split(',')[0];
+        const lat = parseFloat(item.lat);
+        const lng = parseFloat(item.lon);
         setLeadLocation(displayName);
         // Try to guess or extract a pincode from display_name using regex
         const pinMatch = item.display_name.match(/\b\d{6}\b/);
         if (pinMatch) {
           setLeadPincode(pinMatch[0]);
         }
+        setSimSearchedLocation({
+          name: item.display_name.split(',')[0] + ', India',
+          lat,
+          lng,
+          type: 'custom'
+        });
         setIsSimGeocoding(false);
         return;
       }
@@ -252,10 +502,22 @@ export default function SalesSimulatorView({
             setLeadLocation(city);
             setLeadPincode(pincode);
             setSimSearchInput(city);
+            setSimSearchedLocation({
+              name: city,
+              lat: latitude,
+              lng: longitude,
+              type: 'custom'
+            });
           }
         } catch (e) {
           setLeadLocation("Pune");
           setLeadPincode("411057");
+          setSimSearchedLocation({
+            name: "Pune",
+            lat: 18.5204,
+            lng: 73.8567,
+            type: 'city'
+          });
         } finally {
           setIsSimGeocoding(false);
         }
@@ -265,6 +527,12 @@ export default function SalesSimulatorView({
         setIsSimGeocoding(false);
         setLeadLocation("Pune");
         setLeadPincode("411057");
+        setSimSearchedLocation({
+          name: "Pune",
+          lat: 18.5204,
+          lng: 73.8567,
+          type: 'city'
+        });
       },
       { timeout: 5000 }
     );
@@ -331,22 +599,27 @@ export default function SalesSimulatorView({
     setSpeakingText(null);
   };
 
-  // Find nearest college among Focus 5 Partner Colleges based on pincode or location
+  // Find nearest college based on state and focus filters, and pincode or location
   const nearestFocusCollegeResult = useMemo(() => {
-    let coords = getCoordinatesFromPincode(leadPincode);
-    if (!coords) {
-      coords = { name: 'Pune, Maharashtra', lat: 18.5204, lng: 73.8567 };
-    }
+    const coords = simSearchedLocation || getCoordinatesFromPincode(leadPincode) || { name: 'Pune, Maharashtra', lat: 18.5204, lng: 73.8567 };
 
     const focusIds = ['ajeenkya', 'alard', 'universal-skilltech', 'sanjivani', 'medicaps'];
-    const focusColleges = COLLEGES.filter(c => focusIds.includes(c.id));
+    
+    // Filter COLLEGES based on focus colleges filter and state filter
+    let filteredColleges = COLLEGES;
+    if (simFocusOnlyFilter) {
+      filteredColleges = filteredColleges.filter(c => focusIds.includes(c.id));
+    }
+    if (simStateFilter !== 'All') {
+      filteredColleges = filteredColleges.filter(c => c.state === simStateFilter);
+    }
 
-    if (focusColleges.length === 0) return null;
+    if (filteredColleges.length === 0) return null;
 
-    let nearestCol = focusColleges[0];
+    let nearestCol = filteredColleges[0];
     let minDistance = Infinity;
 
-    focusColleges.forEach(col => {
+    filteredColleges.forEach(col => {
       const dist = getHaversineDistance(coords.lat, coords.lng, col.lat, col.lng);
       if (dist < minDistance) {
         minDistance = dist;
@@ -359,7 +632,7 @@ export default function SalesSimulatorView({
       distance: minDistance,
       coordsName: coords.name
     };
-  }, [leadPincode]);
+  }, [simSearchedLocation, leadPincode, simStateFilter, simFocusOnlyFilter]);
 
   // Personalize current counselling step template
   const getPersonalizedScript = (step: CounsellingStep, tone: typeof selectedTone = selectedTone, lang: typeof selectedLanguage = selectedLanguage) => {
@@ -374,33 +647,65 @@ export default function SalesSimulatorView({
     const colName = nearestUnit ? nearestUnit.name : "our elite partner university";
     const colDist = nearestUnit ? `${nearestDist} km` : "your near distance";
     const colFeeStr = nearestUnit ? nearestUnit.programFee : "7.2L total";
-    const colProg = nearestUnit ? nearestUnit.programsList[0] : "B.Sc. Allied Health Science";
     const colPlac = nearestUnit ? `${nearestUnit.avgPlacementPackage} LPA` : "6 LPA";
+
+    let colProg = "";
+    if (lang === 'English') {
+      if (leadProgramInterest === 'All' || !leadProgramInterest) {
+        colProg = "Allied Health Sciences (covering crucial tracks like A&OTT for Operation Theatres, CVT for Cardiac diagnostics, MLS for pathology testing, MRIT for MRI/CT scans, BPT for physical rehabilitation, and EMT for emergency ambulance support, which together handle 80% of hospital operations)";
+      } else {
+        const info = PROGRAM_INFOS[leadProgramInterest] || PROGRAM_INFOS['All'];
+        colProg = `${info.name} (where you will study ${info.descEn})`;
+      }
+    } else {
+      if (leadProgramInterest === 'All' || !leadProgramInterest) {
+        colProg = "Allied Health Sciences (jisey check karein toh isme multiple paths hain: A&OTT me operation theatres, CVT me heart machinery diagnosis, MLS me Pathology lab testing, MRIT me CT scan/MRI set, BPT me rehabilitation exercises, aur EMT me emergency ICU trauma coordinate, jo hospitals ka 80% work force manage hai)";
+      } else {
+        const info = PROGRAM_INFOS[leadProgramInterest] || PROGRAM_INFOS['All'];
+        colProg = `${info.name} (jiski study me aap ${info.descHi})`;
+      }
+    }
 
     // Build Student Profile Insights string
     let academicMatchText = "";
-    if (lead12thStream === 'PCB') {
-      academicMatchText = `your strong 12th Biology stream with ${lead12thMarks}% marks is an absolute perfect fit for high-demand Allied Healthcare programs.`;
-    } else if (lead12thStream === 'PCM') {
-      academicMatchText = `your 12th Mathematical background with ${lead12thMarks}% marks gives you a massive advantage in handling complex medical radiology and cardiac technology equipment.`;
-    } else {
-      academicMatchText = `since you completed ${lead12thStream} stream with ${lead12thMarks}% marks, our healthcare management and global hospitality program track is a perfect carrier launchpad.`;
-    }
+    if (lang === 'English') {
+      if (lead12thStream === 'PCB') {
+        academicMatchText = `your strong 12th Biology stream with ${lead12thMarks}% marks is an absolute perfect fit for high-demand Allied Healthcare programs.`;
+      } else if (lead12thStream === 'PCM') {
+        academicMatchText = `your 12th Mathematical background with ${lead12thMarks}% marks gives you a massive advantage in handling complex medical radiology and cardiac technology equipment.`;
+      } else {
+        academicMatchText = `since you completed ${lead12thStream} stream with ${lead12thMarks}% marks, our healthcare management and global hospitality program track is a perfect carrier launchpad.`;
+      }
 
-    if (leadExamStatus === 'NEET' || leadExamStatus === 'Both') {
-      academicMatchText += ` Since NEET was taken with a score of ${leadExamScore}, Allied Health is the most magnificent alternative to save gap-years and extra donations.`;
-    } else if (leadExamStatus === 'CET') {
-      academicMatchText += ` Your CET score of ${leadExamScore} validates your clinical potential, qualifying you for advanced tech-lab placements.`;
+      if (leadExamStatus === 'NEET' || leadExamStatus === 'Both') {
+        academicMatchText += ` Since NEET was taken with a score of ${leadExamScore}, Allied Health is the most magnificent alternative to save gap-years and extra donations.`;
+      } else if (leadExamStatus === 'CET') {
+        academicMatchText += ` Your CET score of ${leadExamScore} validates your clinical potential, qualifying you for advanced tech-lab placements.`;
+      }
+    } else {
+      if (lead12thStream === 'PCB') {
+        academicMatchText = `aapka strong 12th Biology stream with ${lead12thMarks}% marks, high-demand Allied Healthcare programs ke liye ek absolute perfect fit hai.`;
+      } else if (lead12thStream === 'PCM') {
+        academicMatchText = `aapka 12th Mathematical background with ${lead12thMarks}% marks, high-tech medical radiology aur cardiac technology machines handle karne ke liye ek bada advantage hai.`;
+      } else {
+        academicMatchText = `kyoki aapne ${lead12thStream} stream with ${lead12thMarks}% marks ke sath 12th complete kiya hai, hamara healthcare management pathway ek perfect career option hai.`;
+      }
+
+      if (leadExamStatus === 'NEET' || leadExamStatus === 'Both') {
+        academicMatchText += ` NEET me aapka score ${leadExamScore} hone se, Allied Health ek best option hai door-to-door placement security save karne aur gap-years ko waste na karne ke liye.`;
+      } else if (leadExamStatus === 'CET') {
+        academicMatchText += ` Aapka CET score ${leadExamScore} aapki high technical and diagnostic potential confirm karta hai.`;
+      }
     }
 
     // Determine greetings based on Parent vs Student relation inside the active script
     const greeting = leadRelation === 'Parent' 
-      ? (lang === 'English' ? `Hello Sir/Ma'am, parent of ${leadName}` : `नमस्ते सर/मैडम, ${leadName} के अभिभावक`)
-      : (lang === 'English' ? `Hello ${leadName}` : `नमस्ते ${leadName} बेटा`);
+      ? (lang === 'English' ? `Hello Sir/Ma'am, parent of ${leadName}` : `Namaskar Sir/Ma'am, ${leadName} ke guardian`)
+      : (lang === 'English' ? `Hello ${leadName}` : `Namaskar ${leadName}`);
 
     const relationSuffix = leadRelation === 'Parent'
-      ? (lang === 'English' ? "your child's career safety, practical VR skills, and direct placement protection" : "आपके बच्चे की सुरक्षित नौकरी, VR स्किल ट्रेनिंग और बड़े अस्पतालों में डायरेक्ट प्लेसमेंट")
-      : (lang === 'English' ? "your personal interest in high-tech medical fields, VR headsets training, and exciting job placements" : "आपका मेडिकल फील्ड में करियर बनाने का सपना, VR लैब ट्रेनिंग और आपका डायरेक्ट प्लेसमेंट");
+      ? (lang === 'English' ? "your child's career safety, practical VR skills, and direct placement protection" : "aapke child ke safe career, hands-on practical VR skills, aur direct high-salary placement support")
+      : (lang === 'English' ? "your personal interest in high-tech medical fields, VR headsets training, and exciting job placements" : "aapke high-tech allied medical fields me career interest, VR training labs, aur exciting clinical placements");
 
     let defaultText = step.scriptTemplate
       .replace(/\[Name\]/g, leadName)
@@ -483,68 +788,67 @@ export default function SalesSimulatorView({
     if (lang === 'Hindi') {
       if (tone === 'Standard') {
         const standardHindiTemplates: Record<number, string> = {
-          1: `${greeting}, क्या मेरी बात ${leadRelation === 'Parent' ? `${leadName} के माता-पिता` : leadName} से हो रही है? मैं एम्वर्सिटी से ${counsellorName} बात कर रही हूँ। आपने हमारे एलाइड हेल्थकेयर और हॉस्पिटल कोर्सेज के रिगार्डिंग इन्क्वायरी की थी। इस करियर के शानदार स्कोप को समझाने के लिए बस 5 मिनट आपसे बात करनी थी। क्या अभी बात हो सकती है?`,
-          2: `एम्वर्सिटी यूजीसी-रिकग्नाइज्ड टॉप यूनिवर्सिटीज का ऑफिशियल एकेडमिक और प्लेसमेंट पार्टनर है। आपका डिग्री सर्टिफिकेट सीधे पार्टनर यूनिवर्सिटी देगी, पर कॉलेज के अन्दर हाई-टेक लैब सेटअप, वर्चुअल रियलिटी (VR) ट्रेनिंग और बड़े अस्पतालों में प्रैक्टिकल क्लिनिकल ट्रेनिंग एम्वर्सिटी हैंडल करती है। आपके यहाँ सबसे नजदीक पार्टनर कैंपस ${colName} है (जो आपके घर से सिर्फ ${colDist} की दूरी पर है)।`,
-          3: `आगे डिस्कस करने से पहले आपकी कुछ डिटेल्स जानना चाहूंगी। आप अभी ${leadLocation} से बोल रहे हैं, सही है? घर में करियर का मुख्य निर्णय कौन लेता है, मम्मी या पापा? और ${academicMatchText} क्या आप टॉप अस्पतालों में प्रैक्टिकल क्लिनिकल ट्रेनिंग के लिए हमारे ${colName} कैंपस जाने में कम्फर्टेबल हैं?`,
-          4: `जानकारी देने के लिए धन्यवाद! आपकी प्रोफाइल के हिसाब से B.Sc Honours in Allied Health Sci आपके लिए एक परफेक्ट करियर मैच है। हमारे नजदीक कैंपस ${colName} में ${colProg} जैसे काफी डिमांडिंग कोर्सेज उपलब्ध हैं जहाँ मेडिकल कंपनियां हर साल बड़े पैकेज पर हायर करती हैं।`,
-          5: `हमारा सबसे अनोखा फीचर है वर्चुअल रियलिटी (VR) सिमुलेशन लैब। इसमें स्टूडेंट्स को स्पेशल 3D हेडसेट पहनाकर सीधे एक असली ऑपरेशन थिएटर या ICU का डिजिटल अनुभव मिलता है! बिना किसी रिस्क के आप इंजेक्शन लगाना, ब्लड टेस्ट करना या मशीन ऑपरेट करना जितनी बार चाहें प्रैक्टिस कर सकते हैं, जिससे हॉस्पिटल जाने से पहले आप 100% निपुण हो जाएं।`,
-          6: `इसको अच्छे से समझने के लिए हमारा अगला स्टेप है कि हम एक सीनियर करियर डॉक्टर के साथ आपकी 1-on-1 ऑनलाइन काउंसलिंग मीटिंग बुक करें। इसकी बुकिंग फीस सिर्फ ₹499 है। इसमें आपको ${colName} की टोटल फीस (${colFeeStr}), स्कॉलरशिप क्राइटेरिया, हॉस्टल और फ्री लैपटॉप डिस्ट्रीब्यूशन लिस्ट में नाम सिक्योर करने की पूरी गाइड मिल जाएगी। क्या मैं आपका टाइम लॉक कर दूँ?`,
-          7: `आपका सवाल बिल्कुल जायज है! फ्री काउंसलिंग में आमतौर पर लोग बिना सीरियसनेस के बात करते हैं। हम सिर्फ ₹499 इसलिए चार्ज करते हैं ताकि सीनियर डॉक्टर पूरे 40 मिनट डेडीकेटेड होकर सिर्फ और सिर्फ आपके बच्चे के मार्क्स और आर्थिक बजट के हिसाब से बेस्ट करियर प्लान डिसाइड करें। यह मूवी टिकट से भी सस्ता है पर लाइफ बदल देगा!`,
-          8: `मैं इस हफ्ते के खाली स्लॉट्स चेक कर रही हूँ। मेरे पास सोमवार सुबह 11:00 बजे और मंगलवार शाम 4:30 बजे के दो स्लॉट्स खाली हैं। आप और आपके पेरेंट्स किस टाइम पर कम्फर्टेबल रहेंगे ताकि सब साथ जुड़ सकें?`,
-          9: `बहुत ही बढ़िया फैसला! तो हम आपकी करियर काउंसलिंग बुकिंग सिक्योर कर रहे हैं जिसमें हम सीधे ${colName} (जो सिर्फ ${colDist} दूरी पर है) के एडमिशन, स्कॉलरशिप और लगभग ${colPlac} तक के एवरेज शुरुआती सैलरी पैकेज डिस्कस करेंगे। मैं तुरंत पेमेंट लिंक आपके WhatsApp पर भेज रही हूँ।`,
-          10: `और कॉल समाप्त करने से पहले, क्या आपके क्लासमेट या जानने वाले भी नीट के अलावा करियर ऑप्शंस ढूंढ रहे हैं? हम उन्हें भी एक बेहतरीन मेडिकल करियर पाथवे गाइड करेंगे।`,
-          11: `बहुत-बहुत धन्यवाद आपके कीमती समय के लिए! हमारी टीम मीटिंग से 30 मिनट पहले आपको एक कॉल रिमाइंडर भेज देगी। एक बेहतरीन मेडिकल करियर बनाने के लिए आपको बहुत-बहुत शुभकामनाएं!`
+          1: `${greeting}, kya meri baat ${leadRelation === 'Parent' ? `${leadName} ke parents` : leadName} se ho rahi hai? Main Emversity se ${counsellorName} baat kar rahi hoon. Aapne hamare Allied Healthcare aur Hospital courses ke regarding enquiry ki thi. Is career ke behtareen scope ko samjhane ke liye bas 5 minute aapse baat karni thi. Kya abhi baat ho sakti hai?`,
+          2: `Emversity UGC-recognized top universities ka official academic and placement partner hai. Aapka degree certificate seedhe partner university degi, par college ke inside high-tech lab setup, virtual reality (VR) training, aur bade hospitals me practical clinical training Emversity manage karti hai. Aapke sabse nearest partner campus ${colName} hai (jo aapke ghar se sirf ${colDist} ki distance par hai).`,
+          3: `Aage discuss karne se pehle, aapki kuch details confirm karna chahungi. Aap abhi ${leadLocation} se bol rahe hain, right? Aur ghar me career ka main decision kaun leta hai, mummy ya papa? Aur ${academicMatchText} kya aap top hospitals me practical training ke liye hamare ${colName} campus jane me comfortable hain?`,
+          4: `Information ke liye thank you! Aapki profile ke according B.Sc Honours in Allied Health Sciences aapke liye ek perfect career match hai. Hamare nearest campus ${colName} me ${colProg} jaise high-demand courses available hain jahan medical companies har saal acche package par recruit karti hain.`,
+          5: `Hamara sabse unique feature hai Virtual Reality (VR) Simulation Lab. Isme students ko special 3D headset pehnakar seedhe ek real operation theatre ya ICU ka digital experience milta hai! Bina kisi risk ke, aap injection lagana, blood test karna, ya machines operate karna jitni baar chahein practice kar sakte hain, taaki hospital duties shuru karne se pehle aap 100% expert ho jayein.`,
+          6: `Is process ko detail me samajhne ke liye, hamara next step hai ki hum ek senior career expert ke sath aapki 1-on-1 online counseling meeting schedule karein. Iski booking fee sirf ₹499 hai. Isme aapko ${colName} ki total fees (${colFeeStr}), scholarship criteria, hostel, aur free laptop distribution list me seat secure karne ki poori guide mil jayegi. Kya main aapka slot lock kar doon?`,
+          7: `Aapka sawaal bilkul genuine hai! Free counseling me usually log serious interest ke bina connect hote hain. Hum sirf ₹499 isliye charge karte hain taaki senior doctor poore 40 minutes dedicatedly sirf aur sirf aapke child ke marks aur budget ke hisab se best career plan decide karein. Ye ek basic commitment fee hai jo unka time secure karti hai.`,
+          8: `Main is week ke available slots check kar rahi hoon. Mere paas Monday morning 11:00 AM aur Tuesday evening 4:30 PM ke do slots khali hain. Aap aur aapke parents kis time par comfortable rahenge taaki sab sath me connect ho sakein?`,
+          9: `Bahut hi accha decision! Main aapki career counseling booking register kar rahi hoon jahan hum seedhe ${colName} (distance: ${colDist}) ke admission, scholarship, aur lagbhag ${colPlac} tak ke average initial salary package ke baare me discuss karenge. Main turant payment link aapke WhatsApp par share karti/karta hoon.`,
+          10: `Aur call complete karne se pehle, kya aapke classmates ya friends bhi NEET ke alawa medical field me career options dhoondh rahe hain? Hum unhe bhi ek proper pathway guide kar sakte hain.`,
+          11: `Bahut-bahut dhanyavad aapke valuable time ke liye! Hamari team session se 30 minutes pehle aapko call ya message reminder bhej degi. Ek behtareen medical career banane ke liye aapko best wishes!`
         };
         return standardHindiTemplates[step.id] || standardHindiTemplates[1];
       }
 
       if (tone === 'Empathetic') {
         const empatheticHindiTemplates: Record<number, string> = {
-          1: `${greeting}, प्रणाम। मैं आशा करती हूँ कि आपका दिन बहुत अच्छा जा रहा होगा। मैं एम्वर्सिटी से ${counsellorName} बात कर रही हूँ। मैं आपको यह विश्वास दिलाना चाहती हूँ कि मेडिकल फील्ड चुनना समाज सेवा और बच्चे के भविष्य की सुरक्षा का सबसे पवित्र फैसला है। क्या आपके पास 5 मिनट का छोटा सा समय है अभी बात करने के लिए?`,
-          2: `हम अपने हर स्टूडेंट को अपने परिवार की तरह मानते हैं। यूजीसी-वेरिफाइड टॉप यूनिवर्सिटीज के साथ हमारा टाइ-अप है, पर बच्चे के रहने की सुरक्षा, हॉस्टल सिक्योरिटी और एलाइड साइंस की प्रैक्टिकल ट्रेनिंग हम खुद करीब से संभालते हैं। हमारा नजदीकी कैंपस ${colName} आपके घर से सिर्फ ${colDist} दूरी पर है, जिससे बच्चा कभी भी घर आ-जा सकता है।`,
-          3: `हम चाहते हैं कि बच्चा बिना किसी तनाव के आगे बढ़े। ${academicMatchText} हम चाहते हैं कि ${relationSuffix} की पूरी जिम्मेदारी हम लें। क्या बच्चा हमारे ${colName} कैंपस की सुरक्षित हॉस्टल विंग में सुरक्षित रूप से रहने के लिए तैयार है?`,
-          4: `आपकी बातें सुनकर मुझे बहुत ख़ुशी हुई! आपकी प्रोफाइल के लिए B.Sc Honours in Allied Health Sci से बेहतर और सुरक्षित कोई दूसरा कोर्स नहीं है। ${colName} में ${colProg} की पढ़ाई करने के बाद आपको सीधे बड़े ब्रांड्स जैसे अपोलो या मनीपाल हॉस्पिटल्स में डायरेक्ट सुरक्षित प्लेसमेंट मिलेगा।`,
-          5: `बच्चों को हॉस्पिटल ड्यूटी में शुरू में असली मरीजों का ब्लड ड्रॉ करने या सुई लगाने से थोड़ा घबराहट होती है, जो कि बिल्कुल स्वाभाविक है। इसलिए हमने खास VR (वर्चुअल रियलिटी) सिमुलेशन लैब बनाई हैं। यहाँ बच्चा 3D चश्मा पहनकर पहले एक शांत, फ्रेंडली माहौल वाले सिमुलेटेड रूम में इंजेक्शन लगाने की अनलिमिटेड प्रैक्टिस करके अपना डर दूर कर सकता है!`,
-          6: `इस शांत और सुरक्षित पाथवे को अच्छे से आपके पेरेंट्स को समझाने के लिए, हम हमारे चीफ मेडिकल करियर एडवाइजर के साथ एक सुकून भरी 1-on-1 बातचीत बुक कर देते हैं। इसकी बुकिंग फीस सिर्फ ₹499 है। इसमें हम ${colName} की टोटल सुगम फीस (${colFeeStr}), आसान इंस्टॉलमेंट ऑप्शंस, हॉस्टल विंग और फ्री लैपटॉप एलिजिबिलिटी डिस्कस करेंगे। क्या मैं इसे रजिस्टर कर दूँ?`,
-          7: `मैं आपकी चिंता को पूरी तरह समझती हूँ, हमारे लिए पैसे से पहले आपकी संतुष्टि जरूरी है। यह ₹499 की छोटी सी टोकन फीस इसलिए है क्योंकि हमारे सीनियर डॉक्टर्स का टाइम बहुत लिमिटेड होता है और हम चाहते हैं कि इसे सिर्फ वे ही पेरेंट्स बुक करें जो अपने बच्चे के भविष्य को लेकर एकदम गंभीर हैं।`,
-          8: `हम चाहते हैं कि आप और आपके पेरेंट्स बिना किसी जल्दबाजी के आराम से बात करें। सोमवार सुबह 11:00 बजे या मंगलवार शाम 4:30 बजे, कौन सा समय आपके लिए सबसे सुकून भरा रहेगा?`,
-          9: `बहुत ही उत्तम निर्णय! मैंने आपके काउंसलिंग स्लॉट को ${colName} (दूरी: ${colDist}) के लिए रजिस्टर कर दिया है। यहाँ से बच्चों को औसतन ${colPlac} का प्लेसमेंट पैकेज मिला है। मैं काउंसलिंग की बुकिंग और सुरक्षित पे-लिंक तुरंत आपके व्हाट्सएप पर सेंड कर रही हूँ।`,
-          10: `क्या आपके आसपास कोई और बेटा या बेटी भी है जो डॉक्टर बनने के अलावा हॉस्पिटल के अन्य सम्मानजनक कोर्सेज एक्सप्लोर करना चाहता है? हम उसे भी पूरा स्नेह और मार्गदर्शन देंगे।`,
-          11: `आपका बहुत-बहुत आभार हमसे जुड़ने के लिए! हम मीटिंग शुरू होने से आधा घंटा पहले आपको मैसेज और व्हाट्सएप रिमाइंडर जरूर भेजेंगे। आप बिल्कुल चिंता न करें, सब बहुत अच्छा होगा!`
+          1: `${greeting}, namaskar. Main hope karti hoon ki aapka din accha guzar raha hoga. Main Emversity se ${counsellorName} baat kar rahi hoon. Main aap ko yeh saaf taur par bolna chahti hoon ki medical field chunna samaj sewa aur bacche ke future secure karne ka ek bahut hi accha decision hai. Kya aapke paas 5 minutes ka samay hai shanti se baat karne ke liye?`,
+          2: `Hum apne har ek student ko apne family member ki tarah treat karte hain. UGC-verified partner universities ke sath hamara tie-up hai, par bacche ke hostel ki safety, overall security aur allied courses ki practical clinical training hum khud closely manage karte hain. Hamara sabse safe campus ${colName} aapke ghar se sirf ${colDist} door hai, jisse ya jab bhi baccha chahe ghar aasaani se aa-ja sake.`,
+          3: `Hum chahte hain ki baccha bina kisi pressure ke padhai kare. ${academicMatchText} Hum chahte hain ki unki safe career journey ki poori responsibility hum lein. Kya baccha hamare ${colName} campus ke secure hostel environment me rehne ke liye comfortable hai?`,
+          4: `Aapki baatein sunkar mujhe sach me bahut khushi hui. Aapki profile ke liye B.Sc Honours in Allied Health Sci se behtar aur safe koi doosra course nahi ho sakta. ${colName} me ${colProg} complete karne ke baad aapko seedhe Apollo ya Manipal jaise top hospital partners me direct secure placement support milega.`,
+          5: `Normally students ko shuruat me clinical duties jaise blood withdraw karna ya injection lagane se thodi ghabrahat hoti hai, jo ki bilkul natural hai. Isliye humne special VR (Virtual Reality) simulation labs setup kiye hain. Yahan student 3D headset pehan kar pehle ek fake clinical room me unlimited times practice kar ke apna darr door kar sakta hai.`,
+          6: `Is safe career pathway ko aapke parents ko acche se samjhane ke liye, hum hamare senior medical career advisor ke sath ek reassuring 1-on-1 session book kartey hain. Iski booking fee sirf ₹499 hai. Isme hum ${colName} ki total fees (${colFeeStr}), easy installment schemes, hostel safety aur free laptop allocation process completely discuss karenge. Kya main ise book kar doon?`,
+          7: `Main aapki chinta ko poori tarah se samajh sakti hoon, hamare liye commercial aspects se zyada aapka trust aur peace of mind matter karta hai. Ye ₹499 ki minimal registration fee sirf serious families ko filter karne ke liye hai, taaki hamare senior doctors ka limited time un students ke liye utilize ho jo sach me clear path chahte hain.`,
+          8: `Hum chahte hain ki aap aur aapke parents bina kisi jaldbazi ke aaram se details samajhein. Monday morning 11:00 AM ya Tuesday evening 4:30 PM, kaun sa time aapke liye sabse relaxing rahega?`,
+          9: `Bahut hi buddhimata poorn nirnay! Maine aapka counseling session ${colName} (distance: ${colDist}) ke liye register kar diya hai. Yahan se students ko lagbhag ${colPlac} ka placement package mila hai. Main counseling details aur safe payment link abhi aapke WhatsApp par send kar rahi hoon.`,
+          11: `Aapka bahut-bahut aabhar hamare sath judne ke liye! Session se 30 minutes pehle hum aapko final reminder call zaroor karenge. Aap bilkul chinta mat kijiye, sab bahut accha hoga!`
         };
         return empatheticHindiTemplates[step.id] || empatheticHindiTemplates[1];
       }
 
       if (tone === 'Urgent') {
         const urgentHindiTemplates: Record<number, string> = {
-          1: `${greeting}, तुरंत ध्यान दीजिए! सुबह से एडमिशन पोर्टल पर भारी रश है। मैं एम्वर्सिटी से एलाइड हेल्थकेयर की सीनियर कोआर्डिनेटर ${counsellorName} बोल रही हूँ। 2026 अर्ली सीट्स बहुत तेजी से फुल हो रही हैं। क्या आपके पास 2 मिनट का अर्जेंट समय है आपके बच्चे के स्कोप को तुरंत ब्लॉक करने के लिए?`,
-          2: `देखिए, डिग्री डायरेक्ट गवर्नमेंट यूनिवर्सिटी से मिलेगी, पर एम्वर्सिटी की हाई-सीमित लैब्स और टॉप हॉस्पिटल्स क्लिनिकल सीट्स बहुत लिमिटेड हैं! हमारा आपके सबसे करीब पार्टनर कैंपस ${colName} है जो सिर्फ ${colDist} की दूरी पर है। यहाँ स्पेशल एनेस्थीसिया और ओटी कोर्सेज की सीटें पहले ही 90% बुक हो चुकी हैं!`,
-          3: `बिल्कुल देरी मत कीजिए! आप ${leadLocation} से हैं। और ${academicMatchText} यदि सीट मिस हो गई तो एक साल का नुकसान करोड़ों की लाइफटाइम अर्निंग गवाने जैसा है। क्या आप तुरंत सीट बुकिंग और ${colName} कैंपस के हॉस्टल के लिए तैयार हैं ताकि हम आज ही सीट लॉक कर सकें?`,
-          4: `आजकल साधारण जनरल कोर्सेज करने वाले बेरोजगार घूम रहे हैं! एलाइड हेल्थ साइंस 2026 का सबसे हॉट सेक्टर्स है। ${colName} में ${colProg} जैसे कोर्सेज सीधे कॉर्पोरेट Hospital प्लेसमेंट से जुड़े हुए हैं। देर करने पर ये प्रीमियम कोर्सेज हाथ से निकल जाएंगे!`,
-          5: `सालों-साल थ्योरी रटने के दिन चले गए! हमारा 3D VR सिमुलेशन लैब ही आपके बच्चे को तुरंत आधुनिक स्किल्स सिखाता है जिससे उनका डायरेक्ट सिलेक्शन पहले ही इंटरव्यू में हो जाता है। यही वो सीक्रेट है जो हमारे बच्चों को बाकियों से 2 साल आगे रखता है!`,
-          6: `सीट पर अपना अधिकार पक्का करने के लिए, हमें तुरंत सीनियर रजिस्ट्रार डॉ. के साथ एक 1-on-1 स्पेशल मीटिंग बुक करनी होगी। इसकी कमिटमेंट फीस सिर्फ ₹499 है। इसमें एलीजिबिलिटी चेक, सबसे कम फीस स्ट्रक्चर (${colFeeStr} एट ${colName}), स्पेशल स्कॉलरशिप्स और कॉलेज लैपटॉप का आवंटन उसी वक्त फाइनल हो जाएगा। क्या मैं स्लॉट ब्लॉक कर दूँ?`,
-          7: `ध्यान रहे, फ्री सलाह की कोई गारंटी नहीं होती। ₹499 की राशि केवल गंभीर कैंडिडेट्स को छाँटने के लिए है। यह फीस देते ही आपका नाम प्रायोरिटी लिस्ट में आ जाएगा, जिससे फ्री लैपटॉप डिस्ट्रीब्यूशन और स्कॉलरशिप सीट में आपका क्लेम सबसे टॉप पर फिक्स हो जाएगा!`,
-          8: `मेरे पास केवल 2 ही वीआईपी स्लॉट बचे हैं: सोमवार सुबह 11:00 बजे और मंगलवार शाम 4:30 बजे। तुरंत डिसाइड कीजिए, नहीं तो ये स्लॉट भी क्लोज हो जाएंगे!`,
-          9: `बहुत ही सटीक फैसला! मैंने आपका स्लॉट ${colName} (सिर्फ ${colDist} किलोमीटर दूर) के लिए रिजर्व लिस्ट में रख दिया है जहाँ औसत पैकेज ${colPlac} जाता है। तुरंत सीट लॉक करने के लिए व्हाट्सएप पर भेजे गए पेमेंट गेटवे लिंक पर क्लिक करके ₹499 पे करें, यह लिंक सिर्फ 15 मिनट काम करेगा!`,
-          10: `क्या आपके कोई और दोस्त भी हैं जो एक सिक्योर मेडिकल सीट खोज रहे हैं? उनका नाम भी मुझे तुरंत दीजिए ताकि दोनों की सीट साथ में लॉक हो सके!`,
-          11: `शानदार! बुकिंग कन्फर्म हो चुकी है। पेमेंट होते ही आपका ऑफिसियल टोकन एक्टिवेट हो जाएगा। मीटिंग से 30 मिनट पहले आपको फाइनल अलार्म कॉल मिल जाएगा। ऑल द बेस्ट!`
+          1: `${greeting}, dhyan dijiye! Aaj subah se admission portal par seats book karne ke liye bahut rush hai. Main Emversity se Senior Coordinator ${counsellorName} baat kar rahi hoon. 2026 Batch ke allotment slots bahut fast speed se reserve ho rahe hain. Kya aapke paas 2 minutes ka time hai aapke child ki preference check karne ke liye?`,
+          2: `Dekhiye, degree certification seedhe govt university se hi milega, par Emversity ki clinical training lab seats aur partner hospitals ke batches limited hote hain! Hamara aapke sabse nearest campus ${colName} hai (distance: ${colDist}). Yahan special healthcare courses ki seats lagbhag full hone ki kagar par hain.`,
+          3: `Isme bilkul delay mat kijiye! Aapka location ${leadLocation} hai. Aur ${academicMatchText} agar is baar admission opportunity miss ho gayi, toh 1 saal ka educational gap ho jayega jo professional life me bada setback ban sakta hai. Kya aap ${colName} campus aur hostel options finalize karne ke liye ready hain taaki hum aaj hi seat secure kar sakein?`,
+          4: `Aaj kal normal standard degrees karke lakhon graduates dhoondh rahe hain, par niche allied medical fields me vacancies vacant padi hain! ${colName} me ${colProg} jaise courses direct hospital recruitments se synced hain. Agar is samay process start nahi kiya, toh ye limited opportunity close ho jayegi.`,
+          5: `Pure theoretical learning ka trend ab khatam ho gaya hai! Hamari latest 3D VR simulation tech hi students ko industry-grade professionals banati hai, jisse unhe first interview me hi high salary offers milte hain. Ye tech unhe baaki college students se 2 saal aage rakhti hai.`,
+          6: `Admission control list me priority pane ke liye, hume seedhe Senior Registrar ke sath immediate 1-on-1 counseling block karni padegi. Iski booking commitment fee sirf ₹499 hai. Isme digital eligibility crosscheck, minimum available fee structure (${colFeeStr} at ${colName}), merit scholarships aur mandatory laptop reservation turant finalize ho jayega. Kya main timeline block kar doon?`,
+          7: `Yakeen maniye, genuine and serious advice hamesha premium hoti. Ye ₹499 sirf serious and prioritized candidates ko register karne ke liye hai. Ise pay karte hi aapka entry ticket book ho jata hai aur priority scholarship allocation system me aap sabse top position par aa jate hain.`,
+          8: `Mere dashboard me is samay sirf do priority seats khali hain: Monday morning 11:00 AM ya Tuesday evening 4:30 PM. Turant decide kijiye, varna ye system-generated slots expire ho jayenge!`,
+          9: `Very smart choice! Maine aapka priority session ${colName} (distance: ${colDist} km) ke liye schedule kar diya hai jahan average starting package ${colPlac} tak record kiya gaya hai. WhatsApp par share kiye gaye portal link se ₹499 booking complete karein, ye session link sirf 15 minutes ke liye valid hai!`,
+          10: `Kya aapke pass candidates ki references hain jo medical path me interest rakhte hain? Unki details please abhi share kijiye taaki dono ki counseling aur admission sequence hum simultaneously lock kar sakein.`,
+          11: `Excellent! Setup completed. Payment notification receive hote hi aapka official reference ID generate ho jayega. Meeting se half-an-hour pehle final alarm update aapko mil jayega. All the best!`
         };
         return urgentHindiTemplates[step.id] || urgentHindiTemplates[1];
       }
 
       if (tone === 'Scientific') {
         const scientificHindiTemplates: Record<number, string> = {
-          1: `${greeting}, सादर प्रणाम। मैं एम्वर्सिटी से ${counsellorName} बात कर रही हूँ। नेशनल कमिशन फॉर एलाइड हेल्थकेयर प्रोफेशन्स (NCAHP) एक्ट 2021 के डाटा इंडिकेटर्स के अनुसार इस सेक्टर में देश में भारी वर्कर्स डेफिसिट है। आपका एकेडमिक डेटा एनालिसिस करने के लिए क्या 5 मिनट का समय मिल सकता है?`,
-          2: `एकेडमिक प्रोटोकॉल के अनुसार सभी डिग्री सर्टिफिकेशन्स यूजीसी-वेरिफाइड यूनिवर्सिटीज द्वारा जारी किए जाते हैं। एम्वर्सिटी का कोर फंक्शन एडवांस 3D VR लैब्स और क्लिनिकल हॉस्पिटल प्लेसमेंट्स के पैरामीटर्स इम्प्लीमेंट करना है। आपके जियोग्राफिकल निर्देशांक के सबसे करीब ${colName} कैंपस है जो केवल ${colDist} की दूरी पर स्थित है।`,
-          3: `डेटा वेरीफाई करें: आपका स्थान ${leadLocation} है। और ${academicMatchText} प्रैक्टिकल दक्षता बढ़ाने के लिए क्या आप रोजाना ${colName} ट्रेवल करेंगे या कैंपस के इन-हाउस आवासीय हॉस्टल विंग्स को प्रेफर करेंगे जिससे प्लेसमेंट प्रोबेबिलिटी मैक्सिमाइज हो सके?`,
-          4: `एनालिटिकल असेसमेंट के आधार पर B.Sc Honours in Allied Health Sci आपके स्कोर के लिए ऑप्टिमम फिट है। ${colName} में ${colProg} जैसे स्पेशलाइज्ड कोर्सेज की क्लिनिकल डिमांड बहुत ही उत्कृष्ट है।`,
-          5: `रिसर्च दर्शाती है कि स्क्रीन या बुक लर्निंग का रिटेंशन रेट सिर्फ 30% होता है, जबकि हमारी 3D वर्चुअल रियलिटी (VR) सिमुलेशन लैब्स में ट्रेनिंग करने से क्लिनिकल प्रोसीजर एक्यूरेसी 90% तक बढ़ जाती है! यह टेक्नोलॉजी सीधे ऑपरेशन थिएटर और सिम्युलेटेड ICU का लाइव अभ्यास देती है।`,
-          6: `इस पाथवे के कंप्लीट डेटा को समझने के लिए हमें हमारे मेडिकल करियर एनालिस्ट के साथ एक 1-on-1 शेड्यूल्ड सेशन बुक करना होगा। इसकी नॉमिनल प्रोसेसिंग फीस ₹499 है। इसमें ${colName} की फाइनल फीस (${colFeeStr}), स्कॉलरशिप डिजिटल मॉडल और लैपटॉप प्रायोरिटी आवंटन चेक हो जाएगा। क्या मैं स्लॉट बुक करूँ?`,
-          7: `एक बहुत ही तर्कसंगत प्रश्न। ₹499 का चार्ज काउंसलिंग ऑप्टिमाइजेशन के लिए है ताकि हम सिर्फ गंभीर और एलिजिबल कैंडिडेट्स के लिए ही सीनियर स्पेशलिस्ट के महत्वपूर्ण कंसल्टेशन ऑवर्स अलोकेट कर सकें।`,
-          8: `पोर्टल पर दो वेकेंट शेड्यूल्ड स्लॉट खाली हैं: सोमवार सुबह 11:00 बजे अथवा मंगलवार शाम 4:30 बजे। आपके लिए डेटा कंसल्टेशन का सही विंडो कौन सा रहेगा?`,
-          9: `एक्सेलेंट! शेड्यूलिंग प्रोसेस पूरा हो गया है। आपका प्रायोरिटी स्लॉट ${colName} (दूरी: ${colDist}) के लिए कतारबद्ध है जहाँ एवरेज प्लेसमेंट पैकेज ${colPlac} तक रिफ्लेक्ट हुआ है। ₹499 बुकिंग का गेटवे लिंक सीधे आपके व्हाट्सएप नंबर पर डिस्पैच किया जा रहा है।`,
-          10: `क्या आपके फ्रेंड सर्कल में कोई अन्य कैंडिडेट भी नीट के बिना हाई-सैलरी मेडिकल करियर एनालिसिस करना चाहता है? उनका डेटा भी सेंड कर दीजिए ताकि हम उनकी एलिजिबिलिटी मैप कर सकें।`,
-          11: `कन्फर्मेशन कम्प्लीट! मीटिंग आयोजित होने से ठीक 30 मिनट पूर्व हमारा सर्वर आपको रिमाइंडर डिस्ट्रीब्यूट कर देगा। आपके आगामी क्लिनिकल और प्रोफेशनल करियर इवैल्यूएशन के लिए शुभकामनाएं!`
+          1: `${greeting}, namaskar. Main Emversity career research cell se ${counsellorName} baat kar rahi hoon. National Commission for Allied and Healthcare Professions (NCAHP) Act 2021 ke health workforce data indicators ke mutabiq, clinical operations me expert staff ka lagbhag 40% absolute shortage chal raha hai. Aapka academic portfolio scan karne ke liye kya 5 minutes ka samay mil sakta hai?`,
+          2: `Admissions protocol ke basic rules ke mutabiq, all degree certificates UGC-approved partner universities dwara issue kiye jayenge. Emversity ki specialization high-fidelity virtual reality simulation labs aur clinical hospital placement mapping framework deploy karna hai. Geographically, aapke coordinates se nearest high-tech node ${colName} campus hai (jo strictly ${colDist} door hai).`,
+          3: `Mathematical analysis confirm karein: aapka current regional hub ${leadLocation} hai. Aur ${academicMatchText} optimal professional proficiency ke liye kya aap daily ${colName} commute karenge ya campus ke secure in-house academic residential hostels choice karna chahenge jisse clinical practice matrix maximum ho sake?`,
+          4: `Statistical evaluation aur profile eligibility assessment ke basis par, B.Sc Honours in Allied Health Sciences aapke score metrics ke liye optimal match hai. ${colName} me run ho rahe ${colProg} programs ki current healthcare ecosystem me recruitment index kaafi strong hai.`,
+          5: `Applied medical research ke scientific studies se ye prove hua hai ki class lectures ka knowledge retention index sirf 30% hai, jabki virtual reality simulation labs ki training se diagnostic accuracy 90% tak upgrade ho jati hai! Hamari labs directly visual models and simulated room setups provide karti hain.`,
+          6: `Is total parameters and placement curve ko process wise evaluate karne ke liye, hume Chief Career Analyst ke sath ek personalized 1-on-1 feedback session book karna hoga. Iski evaluation charges sirf ₹499 hai. Isme fee modules (${colFeeStr} at ${colName}), dynamic scholarship curves, aur hardware/laptop distribution criteria evaluate kiya jayega. Kya main session schedule kar doon?`,
+          7: `Ye ek intellectual and logical process fee hai. ₹499 ensures high-quality execution, taaki hum core research analysts ke hours strictly un candidates ke liye assign kar sakein jinke data profiles healthcare standards ke liye fit hain.`,
+          8: `Schedule timeline me abhi do slots available hain: Monday morning 11:00 AM ya Tuesday evening 4:30 PM. Aap kis evaluation window ko prioritize karenge?`,
+          9: `Data entry finalized! Aapka analytical session ${colName} (distance: ${colDist}) ke liye block kar diya gaya hai jiska performance placement package lagbhag ${colPlac} initial median salary range track hua hai. Portal gateway link abhi aapke automatic WhatsApp API se dispatch ho raha hai.`,
+          10: `Kya aapke metrics range me koi aur diagnostic candidates hain jo without NEET high-salary technical hospital medical paths investigate karna chahte hain? Unka basic academic record please verify karwayein.`,
+          11: `Admissions confirmation pipeline successful. Session schedule se strictly 30 minutes pehle humara digital server automatic alert notification trigger kar dega. Healthcare automation and professional analytics me entrance ke liye hamari poori team ki taraf se shubhkamnayein.`
         };
         return scientificHindiTemplates[step.id] || scientificHindiTemplates[1];
       }
@@ -581,7 +885,7 @@ export default function SalesSimulatorView({
 
     const systemPrompt = type === 'script'
       ? `You are an elite, highly persuasive sales manager training counselors for Emversity (UGC-approved allied health degree partner with 23+ campuses, VR simulation training, and ₹499 career demo sessions).
-         Your task is to take the counselor script and modify it based on the name specified, relation (${leadRelation}), stream (${lead12thStream}), marks (${lead12thMarks}%), regional location (${leadLocation}, pincode: ${leadPincode}), and the requested emotional tone and language guidelines: Lang="${selectedLanguage}", Tone="${selectedTone}". Prompt: "${customPromptMessage}".
+         Your task is to take the counselor script and modify it based on the name specified, relation (${leadRelation}), stream (${lead12thStream}), marks (${lead12thMarks}%), regional location (${leadLocation}, pincode: ${leadPincode}), program interest (${leadProgramInterest}), and the requested emotional tone and language guidelines: Lang="${selectedLanguage}", Tone="${selectedTone}". Prompt: "${customPromptMessage}".
          Create a natural, highly conversational script tailored exactly to whether the target person is indeed a Student (beta) or Parent (parents' protection). Keep it concise (1-2 paragraphs) for phone practicability.`
       : `You are an expert sales trainer simulating an objection call for Emversity's admission desk.
          The caller has raised this objection: "${customPromptMessage}".
@@ -841,10 +1145,11 @@ export default function SalesSimulatorView({
               {/* Manual Override Inputs for State/Zip */}
               <div className="grid grid-cols-2 gap-2.5">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-mono text-[#71717a] uppercase font-bold block">
-                    Hometown / Area Resolved
+                  <label className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block" htmlFor="sim-lead-location">
+                    📍 Area Resolved
                   </label>
                   <input
+                    id="sim-lead-location"
                     type="text"
                     value={leadLocation}
                     onChange={(e) => {
@@ -856,16 +1161,69 @@ export default function SalesSimulatorView({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[9px] font-mono text-[#71717a] uppercase font-bold block">
-                    PIN Code
+                  <label className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block" htmlFor="sim-lead-pincode">
+                    🔢 PIN Code
                   </label>
                   <input
+                    id="sim-lead-pincode"
                     type="text"
                     maxLength={6}
                     value={leadPincode}
-                    onChange={(e) => setLeadPincode(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setLeadPincode(val);
+                      if (val.length >= 4) {
+                        const coords = getCoordinatesFromPincode(val);
+                        if (coords) {
+                          setSimSearchedLocation({
+                            name: coords.name,
+                            lat: coords.lat,
+                            lng: coords.lng,
+                            type: 'pincode'
+                          });
+                        }
+                      }
+                    }}
                     className="w-full bg-[#18181b]/70 border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white"
                   />
+                </div>
+              </div>
+
+              {/* State and Focus Campus Filters (Dynamic nearest college selection) */}
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block" htmlFor="sim-state-filter">
+                    🏛️ State Filter
+                  </label>
+                  <select
+                    id="sim-state-filter"
+                    value={simStateFilter}
+                    onChange={(e) => setSimStateFilter(e.target.value)}
+                    className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white cursor-pointer"
+                  >
+                    <option value="All">All States (20+ Campuses)</option>
+                    {simulatorStates.map(stateName => (
+                      <option key={stateName} value={stateName}>{stateName}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block leading-none mb-1">
+                    ⚡ Focus Campus Filter
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSimFocusOnlyFilter(!simFocusOnlyFilter)}
+                    className={`w-full inline-flex items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold shadow-sm transition-all cursor-pointer ${
+                      simFocusOnlyFilter 
+                        ? 'bg-amber-500/10 hover:bg-amber-500/20 text-[#f59e0b] border-amber-500/30' 
+                        : 'bg-[#18181b] border-[#27272a] hover:bg-[#202022] text-[#a1a1aa]'
+                    }`}
+                  >
+                    <span>{simFocusOnlyFilter ? '🚀 Focus 5 Only' : '🌍 All Campuses'}</span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${simFocusOnlyFilter ? 'bg-[#f59e0b] animate-pulse' : 'bg-zinc-500'}`} />
+                  </button>
                 </div>
               </div>
 
@@ -876,6 +1234,27 @@ export default function SalesSimulatorView({
                   <span className="text-[10px] font-bold text-white uppercase tracking-wider font-mono">
                     Student Background Profile
                   </span>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block flex justify-between" htmlFor="sim-program-interest">
+                    <span>💡 Intended Program Track</span>
+                    <span className="text-[#f59e0b] text-[8px] font-mono">Dynamic Speech Adaptation</span>
+                  </label>
+                  <select
+                    id="sim-program-interest"
+                    value={leadProgramInterest}
+                    onChange={(e) => setLeadProgramInterest(e.target.value)}
+                    className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white cursor-pointer"
+                  >
+                    <option value="All">🧬 All / General (Showcase All Fields)</option>
+                    <option value="A&OTT">🏥 Anaesthesia & Operation Theatre Tech (A&OTT)</option>
+                    <option value="CVT">🫀 Cardiovascular Technology (CVT)</option>
+                    <option value="MLS">🔬 Medical Laboratory Science (MLS / MLT)</option>
+                    <option value="MRIT">🩻 Medical Radiology & Imaging Tech (MRIT)</option>
+                    <option value="BPT">🤸 Physiotherapy (BPT)</option>
+                    <option value="EMT">🚨 Emergency Medical Technology (EMT)</option>
+                  </select>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2.5">
@@ -1272,6 +1651,99 @@ export default function SalesSimulatorView({
         {/* Right Column: Objection Handler Deck, Interruption Panel */}
         <div className="space-y-6">
           
+          {/* Objections Database Search Deck */}
+          <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-5 shadow-xl space-y-4">
+            <h4 className="text-white text-xs font-bold uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <MessageSquare className="w-4 h-4 text-[#f59e0b]" />
+              Objections Repo (50 Mapped Cases)
+            </h4>
+
+            {/* Inputs and search */}
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#71717a]" />
+                <input
+                  type="text"
+                  placeholder="Type category or keyword (e.g., Fees, MBBS)..."
+                  value={conflictSearchQuery}
+                  onChange={(e) => setConflictSearchQuery(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 pl-9 pr-3 text-xs text-white"
+                />
+              </div>
+
+              <select
+                aria-label="Filter objections by category"
+                value={conflictSelectedCategory}
+                onChange={(e) => setConflictSelectedCategory(e.target.value)}
+                className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
+              >
+                <option value="All">All Categories ({OBJECTIONS.length})</option>
+                {parsedCategories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Quick recommend tags lists */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[9.5px] font-mono text-[#71717a] uppercase font-bold block">🚨 Common Objections Discussed</span>
+              <div className="flex flex-wrap gap-1">
+                {topObjections.slice(0, 7).map(obj => (
+                  <button
+                    key={obj.id}
+                    onClick={() => {
+                      setActiveConflictObjectionId(obj.id);
+                      setSelectedTone('Standard');
+                      cancelSpeech();
+                    }}
+                    className={`text-[9.5px] font-mono font-medium rounded-md px-1.5 py-0.5 border transition-all cursor-pointer ${
+                      activeConflictObjectionId === obj.id
+                        ? 'bg-red-500/20 border-red-500 text-red-300'
+                        : 'bg-[#27272b]/30 border-[#27272a] text-[#a1a1aa] hover:border-[#71717a]'
+                    }`}
+                  >
+                    #{obj.id} {obj.subCategory}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Core list matching search query */}
+            <div className="space-y-1.5">
+              <span className="text-[9.5px] font-mono text-[#71717a] uppercase font-bold block font-sans">
+                Full Objections Database ({filteredObjections.length} found)
+              </span>
+              <div className="max-h-[220px] overflow-y-auto space-y-1.5 border border-[#27272a] rounded-xl p-2 bg-[#18181b] pr-1 scrollbar-thin">
+                {filteredObjections.map(obj => {
+                  const isAct = obj.id === activeConflictObjectionId;
+                  return (
+                    <button
+                      key={obj.id}
+                      onClick={() => {
+                        setActiveConflictObjectionId(obj.id);
+                        setSelectedTone('Standard');
+                        cancelSpeech();
+                      }}
+                      className={`w-full text-left p-2.5 rounded-lg border text-[11px] leading-tight transition-all flex justify-between items-start gap-2 cursor-pointer ${
+                        isAct
+                          ? 'bg-[#271515] border-red-500/40 text-red-200 font-semibold'
+                          : 'bg-[#111113] border-[#27272a] text-[#a1a1aa] hover:border-[#313135] hover:text-[#e4e4e7]'
+                      }`}
+                    >
+                      <div className="space-y-1">
+                        <strong className="block text-[#e4e4e7] leading-normal">#{obj.id}. {obj.objection.replace(/Rohit/g, leadName)}</strong>
+                        <span className="text-[9px] text-[#71717a] font-mono uppercase block">{obj.category} &rsaquo; {obj.subCategory}</span>
+                      </div>
+                      <span className={`text-[8.5px] font-mono px-1.5 py-0.5 rounded ${
+                        obj.difficulty === 'Hard' ? 'bg-red-950/40 text-red-400' : 'bg-amber-950/40 text-[#f59e0b]'
+                      }`}>{obj.difficulty}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* Active Interruption State (If an objection is activated!) */}
           <AnimatePresence mode="wait">
             {activeConflictObjectionId !== null && activeObjection ? (
@@ -1419,98 +1891,6 @@ export default function SalesSimulatorView({
             )}
           </AnimatePresence>
 
-          {/* Objections Database Search Deck */}
-          <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-5 shadow-xl space-y-4">
-            <h4 className="text-white text-xs font-bold uppercase tracking-widest font-mono flex items-center gap-1.5">
-              <MessageSquare className="w-4 h-4 text-[#f59e0b]" />
-              Objections Repo (50 Mapped Cases)
-            </h4>
-
-            {/* Inputs and search */}
-            <div className="space-y-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#71717a]" />
-                <input
-                  type="text"
-                  placeholder="Type category or keyword (e.g., Fees, MBBS)..."
-                  value={conflictSearchQuery}
-                  onChange={(e) => setConflictSearchQuery(e.target.value)}
-                  className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 pl-9 pr-3 text-xs text-white"
-                />
-              </div>
-
-              <select
-                aria-label="Filter objections by category"
-                value={conflictSelectedCategory}
-                onChange={(e) => setConflictSelectedCategory(e.target.value)}
-                className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
-              >
-                <option value="All">All Categories ({OBJECTIONS.length})</option>
-                {parsedCategories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Quick recommend tags lists */}
-            <div className="space-y-1.5 pt-1">
-              <span className="text-[9.5px] font-mono text-[#71717a] uppercase font-bold block">🚨 Common Objections Discussed</span>
-              <div className="flex flex-wrap gap-1">
-                {topObjections.slice(0, 7).map(obj => (
-                  <button
-                    key={obj.id}
-                    onClick={() => {
-                      setActiveConflictObjectionId(obj.id);
-                      setSelectedTone('Standard');
-                      cancelSpeech();
-                    }}
-                    className={`text-[9.5px] font-mono font-medium rounded-md px-1.5 py-0.5 border transition-all cursor-pointer ${
-                      activeConflictObjectionId === obj.id
-                        ? 'bg-red-500/20 border-red-500 text-red-300'
-                        : 'bg-[#27272b]/30 border-[#27272a] text-[#a1a1aa] hover:border-[#71717a]'
-                    }`}
-                  >
-                    #{obj.id} {obj.subCategory}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Core list matching search query */}
-            <div className="space-y-1.5">
-              <span className="text-[9.5px] font-mono text-[#71717a] uppercase font-bold block font-sans">
-                Full Objections Database ({filteredObjections.length} found)
-              </span>
-              <div className="max-h-[220px] overflow-y-auto space-y-1.5 border border-[#27272a] rounded-xl p-2 bg-[#18181b] pr-1 scrollbar-thin">
-                {filteredObjections.map(obj => {
-                  const isAct = obj.id === activeConflictObjectionId;
-                  return (
-                    <button
-                      key={obj.id}
-                      onClick={() => {
-                        setActiveConflictObjectionId(obj.id);
-                        setSelectedTone('Standard');
-                        cancelSpeech();
-                      }}
-                      className={`w-full text-left p-2.5 rounded-lg border text-[11px] leading-tight transition-all flex justify-between items-start gap-2 cursor-pointer ${
-                        isAct
-                          ? 'bg-[#271515] border-red-500/40 text-red-200 font-semibold'
-                          : 'bg-[#111113] border-[#27272a] text-[#a1a1aa] hover:border-[#313135] hover:text-[#e4e4e7]'
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <strong className="block text-[#e4e4e7] leading-normal">#{obj.id}. {obj.objection.replace(/Rohit/g, leadName)}</strong>
-                        <span className="text-[9px] text-[#71717a] font-mono uppercase block">{obj.category} &rsaquo; {obj.subCategory}</span>
-                      </div>
-                      <span className={`text-[8.5px] font-mono px-1.5 py-0.5 rounded ${
-                        obj.difficulty === 'Hard' ? 'bg-red-950/40 text-red-400' : 'bg-amber-950/40 text-[#f59e0b]'
-                      }`}>{obj.difficulty}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>
