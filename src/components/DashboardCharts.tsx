@@ -21,7 +21,6 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
   const chartHeight = containerHeight - paddingBottom;
 
   // TAB 1: ROI data mapping (Fee vs Placement Packages)
-  // Let's take top 10 or all colleges for neat visualization
   const roiData = colleges.slice(0, 10).map((col) => ({
     name: col.name.length > 20 ? `${col.name.substring(0, 18)}...` : col.name,
     fullName: col.name,
@@ -50,11 +49,11 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
   const maxIntakeY = Math.ceil(maxIntake / 100) * 100;
 
   return (
-    <div className="border border-[#27272a] bg-[#111113] rounded-3xl p-6 shadow-lg">
+    <div className="glass-panel rounded-3xl p-6 shadow-lg">
       {/* Tab select and header info */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#f59e0b] bg-[#27272a] px-2.5 py-1 rounded-full border border-[#f59e0b]/20">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#14b8a6] bg-teal-500/5 px-2.5 py-1 rounded-full border border-[#14b8a6]/20">
             Analytics Studio
           </span>
           <h2 className="font-sans font-bold text-white text-xl tracking-tight mt-1.5">
@@ -62,12 +61,12 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
           </h2>
         </div>
 
-        <div className="flex bg-[#18181b] p-1 rounded-xl border border-[#27272a] w-full sm:w-auto">
+        <div className="flex glass-input p-1 rounded-xl w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('roi')}
-            className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+            className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${
               activeTab === 'roi'
-                ? 'bg-[#27272a] text-[#f59e0b] shadow-sm'
+                ? 'bg-teal-500/15 text-teal-400 shadow-sm'
                 : 'text-[#a1a1aa] hover:text-white'
             }`}
           >
@@ -76,9 +75,9 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
           </button>
           <button
             onClick={() => setActiveTab('intake')}
-            className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+            className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${
               activeTab === 'intake'
-                ? 'bg-[#27272a] text-[#f59e0b] shadow-sm'
+                ? 'bg-teal-500/15 text-teal-400 shadow-sm'
                 : 'text-[#a1a1aa] hover:text-white'
             }`}
           >
@@ -92,30 +91,30 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
       {activeTab === 'roi' ? (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
-            <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl">
-              <span className="text-[10px] font-medium text-[#f59e0b] uppercase tracking-widest block">
+            <div className="p-3 glass-input rounded-xl">
+              <span className="text-[10px] font-medium text-teal-400 uppercase tracking-widest block font-bold">
                 Average Placement
               </span>
               <span className="font-sans font-bold text-white text-lg">
                 ~5.8 LPA
               </span>
             </div>
-            <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl">
-              <span className="text-[10px] font-medium text-[#10b981] uppercase tracking-widest block">
+            <div className="p-3 glass-input rounded-xl">
+              <span className="text-[10px] font-medium text-teal-400 uppercase tracking-widest block font-bold">
                 Typical Course Duration
               </span>
               <span className="font-sans font-bold text-white text-lg">
                 4 Years (3+1)
               </span>
             </div>
-            <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl col-span-2">
+            <div className="p-3 glass-pill rounded-xl col-span-2">
               <p className="text-[10px] text-[#a1a1aa] leading-relaxed font-mono">
-                💡 <strong className="text-[#f59e0b]">ROI Insight:</strong> DBS Global and Techno India offer the highest reported direct clinical placement rates relative to initial tuition booking.
+                💡 <strong className="text-teal-400">ROI Insight:</strong> DBS Global and Techno India offer the highest reported direct clinical placement rates relative to initial tuition booking.
               </p>
             </div>
           </div>
 
-          {/* SVG Multi bar chart (Tuition Fee in Indigo, Placement in Green) */}
+          {/* SVG Multi bar chart (Tuition Fee in Indigo, Placement in Cyan) */}
           <div className="relative h-[280px] w-full mt-4">
             <svg viewBox={`0 0 800 ${containerHeight}`} className="w-full h-full">
               {/* Y Axis Guides */}
@@ -175,14 +174,14 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
                       transition={{ duration: 0.8, delay: i * 0.04, type: 'spring', stiffness: 120 }}
                     />
 
-                    {/* Right Bar: Average Placement (Sophisticated Amber) */}
+                    {/* Right Bar: Average Placement (Sophisticated Seafoam) */}
                     <motion.rect
                       x={startX + 22}
                       y={chartHeight - placementHeight}
                       width="18"
                       height={placementHeight}
                       rx="3"
-                      className="fill-[#f59e0b] cursor-pointer"
+                      className="fill-[#14b8a6] cursor-pointer"
                       initial={{ height: 0, y: chartHeight }}
                       animate={{ height: placementHeight, y: chartHeight - placementHeight }}
                       transition={{ duration: 0.8, delay: i * 0.04 + 0.1, type: 'spring', stiffness: 120 }}
@@ -209,14 +208,14 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
                         width="120"
                         height="34"
                         rx="4"
-                        className="fill-[#18181b] border border-[#27272a] shadow-2xl"
+                        className="fill-[#111524] border border-[#27272a] shadow-2xl"
                         stroke="#3f3f46"
                         strokeWidth="1"
                       />
                       <text x="0" y="-18" textAnchor="middle" className="fill-white font-sans text-[8px] font-semibold">
                         {d.fullName.length > 20 ? `${d.fullName.substring(0, 18)}...` : d.fullName}
                       </text>
-                      <text x="0" y="-8" textAnchor="middle" className="fill-[#f59e0b] font-mono text-[8px]">
+                      <text x="0" y="-8" textAnchor="middle" className="fill-[#14b8a6] font-mono text-[8px]">
                         Fee: {d.fee.toFixed(2)}L | Placement: {d.placement.toFixed(1)} LPA
                       </text>
                     </g>
@@ -232,7 +231,7 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
                 <span>Annual Tuition Fee (Lakhs)</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-1.5 bg-[#f59e0b] rounded-full inline-block"></span>
+                <span className="w-3 h-1.5 bg-[#14b8a6] rounded-full inline-block"></span>
                 <span>Avg Placement package (LPA)</span>
               </div>
             </div>
@@ -240,27 +239,27 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
         </div>
       ) : (
         <div>
-          {/* TAB 2: State Enrollment Capacity (Total capacity of colleges mapped top down) */}
+          {/* TAB 2: State Enrollment Capacity */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
-            <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl">
-              <span className="text-[10px] font-medium text-[#f59e0b] uppercase tracking-widest block">
+            <div className="p-3 glass-input rounded-xl">
+              <span className="text-[10px] font-medium text-teal-400 uppercase tracking-widest block font-bold">
                 Total Listed Colleges
               </span>
               <span className="font-sans font-bold text-white text-lg">
                 24 Campuses
               </span>
             </div>
-            <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl">
-              <span className="text-[10px] font-medium text-[#10b981] uppercase tracking-widest block">
+            <div className="p-3 glass-input rounded-xl">
+              <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-widest block font-bold">
                 Total Cumulative Intake
               </span>
               <span className="font-sans font-bold text-white text-lg">
                 8,036 Students
               </span>
             </div>
-            <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl col-span-2">
+            <div className="p-3 glass-pill rounded-xl col-span-2">
               <p className="text-[10px] text-[#a1a1aa] leading-relaxed font-mono">
-                📊 <strong className="text-[#f59e0b]">Geographic Hotspot:</strong> Karnataka and Tamil Nadu are the absolute largest allied health science educational hubs with over 2000+ total combined learner intakes.
+                📊 <strong className="text-teal-400">Geographic Hotspot:</strong> Karnataka and Tamil Nadu are the absolute largest allied health science educational hubs with over 2000+ total combined learner intakes.
               </p>
             </div>
           </div>
@@ -310,14 +309,14 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
                       className="fill-white/0 hover:fill-white/5 transition-colors pointer-events-auto cursor-pointer"
                     />
 
-                    {/* Solid Bar */}
+                    {/* Solid Bar (Seafoam matching theme) */}
                     <motion.rect
                       x={startX}
                       y={chartHeight - barHeight}
                       width={barWidth}
                       height={barHeight}
                       rx="4"
-                      className="fill-[#f59e0b]/90 hover:fill-[#fbbf24] cursor-pointer"
+                      className="fill-[#14b8a6]/70 hover:fill-teal-300 cursor-pointer"
                       initial={{ height: 0, y: chartHeight }}
                       animate={{ height: barHeight, y: chartHeight - barHeight }}
                       transition={{ duration: 0.8, delay: i * 0.05, type: 'spring', stiffness: 120 }}
@@ -338,7 +337,7 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
                       x={startX + barWidth / 2}
                       y={chartHeight - barHeight - 8}
                       textAnchor="middle"
-                      className="fill-[#f59e0b] text-[9px] font-bold font-mono opacity-0 group-hover:opacity-100 transition-opacity animate-pulse"
+                      className="fill-teal-400 text-[9px] font-bold font-mono opacity-0 group-hover:opacity-100 transition-opacity animate-pulse"
                     >
                       {d.intake} Students
                     </text>
@@ -350,7 +349,7 @@ export default function DashboardCharts({ colleges }: DashboardChartsProps) {
             {/* Custom chart legend */}
             <div className="absolute top-2 right-4 flex items-center gap-4 text-[10px] text-[#a1a1aa]">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-1.5 bg-[#f59e0b] rounded-full inline-block"></span>
+                <span className="w-3 h-1.5 bg-[#14b8a6] rounded-full inline-block"></span>
                 <span>Cumulative Student Seat Capacity By State</span>
               </div>
             </div>

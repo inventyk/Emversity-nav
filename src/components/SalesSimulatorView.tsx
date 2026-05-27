@@ -987,14 +987,14 @@ export default function SalesSimulatorView({
     <div className="space-y-6">
       
       {/* 1. Header Control Deck & Persona configuration */}
-      <section className="bg-[#111113] border border-[#27272a] rounded-3xl p-6 relative overflow-hidden shadow-xl">
-        <div className="absolute top-0 right-0 p-6 text-[#f59e0b] opacity-10 pointer-events-none">
+      <section className="glass-panel rounded-3xl p-6 relative overflow-hidden shadow-xl">
+        <div className="absolute top-0 right-0 p-6 text-[#14b8a6] opacity-10 pointer-events-none">
           <Sliders className="w-16 h-16" />
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <span className="text-xs font-bold text-[#f59e0b] uppercase tracking-widest font-mono flex items-center gap-1.5">
+            <span className="text-xs font-bold text-[#14b8a6] uppercase tracking-widest font-mono flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 animate-pulse" />
               Counselor Practice Deck
             </span>
@@ -1019,7 +1019,7 @@ export default function SalesSimulatorView({
             )}
             <button
               onClick={() => setShowSettingsModal(true)}
-              className="p-2 border border-[#3f3f46] hover:border-[#f59e0b] rounded-xl bg-[#27272a]/20 text-white transition-all text-xs cursor-pointer"
+              className="p-2 border border-[#3f3f46] hover:border-[#14b8a6] rounded-xl glass-pill/20 text-white transition-all text-xs cursor-pointer"
               title="Simulator Core Configuration"
             >
               <Settings className="w-4 h-4" />
@@ -1041,7 +1041,7 @@ export default function SalesSimulatorView({
                 placeholder="Maya"
                 value={counsellorName}
                 onChange={(e) => setCounsellorName(e.target.value)}
-                className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-9 text-xs text-white"
+                className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-9 text-xs text-white"
               />
             </div>
           </div>
@@ -1058,7 +1058,7 @@ export default function SalesSimulatorView({
                 placeholder="Rohit"
                 value={leadName}
                 onChange={(e) => setLeadName(e.target.value)}
-                className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-9 text-xs text-white"
+                className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-9 text-xs text-white"
               />
             </div>
           </div>
@@ -1067,7 +1067,7 @@ export default function SalesSimulatorView({
             <label className="text-[10px] font-mono text-[#71717a] uppercase font-bold block" htmlFor="sim-lead-relation">
               🤝 Target Relation on Call
             </label>
-            <div className="flex bg-[#18181b] border border-[#27272a] rounded-xl p-0.5">
+            <div className="flex glass-input rounded-xl p-0.5">
               {(['Student', 'Parent'] as const).map(rel => (
                 <button
                   key={rel}
@@ -1075,7 +1075,7 @@ export default function SalesSimulatorView({
                   onClick={() => setLeadRelation(rel)}
                   className={`flex-1 py-1.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
                     leadRelation === rel
-                      ? 'bg-[#27272a] text-white font-bold'
+                      ? 'glass-pill text-white font-bold'
                       : 'text-[#71717a] hover:text-[#a1a1aa]'
                   }`}
                 >
@@ -1091,13 +1091,13 @@ export default function SalesSimulatorView({
           
           {/* Inputs Section */}
           <div className="md:col-span-5 flex flex-col justify-between space-y-3.5 bg-[#141416]/50 border border-[#27272a]/40 p-4 rounded-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 text-[#f59e0b] opacity-5 pointer-events-none">
+            <div className="absolute top-0 right-0 p-3 text-[#14b8a6] opacity-5 pointer-events-none">
               <Plus className="w-12 h-12" />
             </div>
             
             <div className="space-y-3.5">
               <div className="flex items-center gap-1.5">
-                <span className="text-amber-500 text-sm animate-pulse">📍</span>
+                <span className="text-[#14b8a6] text-sm animate-pulse">📍</span>
                 <span className="text-[11px] font-bold text-white uppercase tracking-wider font-mono">
                   Student Location Parameters
                 </span>
@@ -1117,12 +1117,12 @@ export default function SalesSimulatorView({
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleSimLocationSearch(simSearchInput);
                     }}
-                    className="flex-1 bg-[#18181b] border border-[#27272a] hover:border-[#3d3d41] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
+                    className="flex-1 glass-input hover:border-[#3d3d41] focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
                     id="sim-search-input"
                   />
                   <button
                     onClick={handleSimGpsLocation}
-                    className="px-2.5 py-2 bg-[#1e1b4b] text-[#818cf8] border border-[#312e81] hover:bg-[#312e81] rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer flex items-center gap-1"
+                    className="px-2.5 py-2 bg-[#115e59]/20 text-[#2dd4bf] border border-[#14b8a6]/30 hover:bg-[#115e59]/30 rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer flex items-center gap-1"
                     title="Use Device GPS"
                     id="btn-sim-gps"
                   >
@@ -1131,7 +1131,7 @@ export default function SalesSimulatorView({
                   <button
                     disabled={isSimGeocoding}
                     onClick={() => handleSimLocationSearch(simSearchInput)}
-                    className="px-3 py-2 bg-[#f59e0b] text-[#09090b] rounded-xl text-xs font-bold hover:bg-[#fbbf24] disabled:opacity-50 transition-all cursor-pointer"
+                    className="px-3 py-2 bg-[#14b8a6]/20 text-[#2dd4bf] border border-[#14b8a6]/45 hover:bg-[#14b8a6]/30 rounded-xl text-xs font-bold disabled:opacity-50 transition-all cursor-pointer"
                     id="btn-sim-locate"
                   >
                     {isSimGeocoding ? '...' : 'Search'}
@@ -1156,7 +1156,7 @@ export default function SalesSimulatorView({
                       setLeadLocation(e.target.value);
                       setSimSearchInput(e.target.value);
                     }}
-                    className="w-full bg-[#18181b]/70 border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white"
+                    className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white"
                   />
                 </div>
 
@@ -1184,7 +1184,7 @@ export default function SalesSimulatorView({
                         }
                       }
                     }}
-                    className="w-full bg-[#18181b]/70 border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white"
+                    className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white"
                   />
                 </div>
               </div>
@@ -1199,7 +1199,7 @@ export default function SalesSimulatorView({
                     id="sim-state-filter"
                     value={simStateFilter}
                     onChange={(e) => setSimStateFilter(e.target.value)}
-                    className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white cursor-pointer"
+                    className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white cursor-pointer"
                   >
                     <option value="All">All States (20+ Campuses)</option>
                     {simulatorStates.map(stateName => (
@@ -1217,12 +1217,12 @@ export default function SalesSimulatorView({
                     onClick={() => setSimFocusOnlyFilter(!simFocusOnlyFilter)}
                     className={`w-full inline-flex items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold shadow-sm transition-all cursor-pointer ${
                       simFocusOnlyFilter 
-                        ? 'bg-amber-500/10 hover:bg-amber-500/20 text-[#f59e0b] border-amber-500/30' 
+                        ? 'bg-teal-500/10 hover:bg-teal-500/20 text-[#14b8a6] border-teal-500/30' 
                         : 'bg-[#18181b] border-[#27272a] hover:bg-[#202022] text-[#a1a1aa]'
                     }`}
                   >
                     <span>{simFocusOnlyFilter ? '🚀 Focus 5 Only' : '🌍 All Campuses'}</span>
-                    <span className={`w-1.5 h-1.5 rounded-full ${simFocusOnlyFilter ? 'bg-[#f59e0b] animate-pulse' : 'bg-zinc-500'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${simFocusOnlyFilter ? 'bg-[#14b8a6] animate-pulse' : 'bg-zinc-500'}`} />
                   </button>
                 </div>
               </div>
@@ -1239,13 +1239,13 @@ export default function SalesSimulatorView({
                 <div className="space-y-1">
                   <label className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block flex justify-between" htmlFor="sim-program-interest">
                     <span>💡 Intended Program Track</span>
-                    <span className="text-[#f59e0b] text-[8px] font-mono">Dynamic Speech Adaptation</span>
+                    <span className="text-[#14b8a6] text-[8px] font-mono">Dynamic Speech Adaptation</span>
                   </label>
                   <select
                     id="sim-program-interest"
                     value={leadProgramInterest}
                     onChange={(e) => setLeadProgramInterest(e.target.value)}
-                    className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white cursor-pointer"
+                    className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white cursor-pointer"
                   >
                     <option value="All">🧬 All / General (Showcase All Fields)</option>
                     <option value="A&OTT">🏥 Anaesthesia & Operation Theatre Tech (A&OTT)</option>
@@ -1265,7 +1265,7 @@ export default function SalesSimulatorView({
                     <select
                       value={lead12thStream}
                       onChange={(e) => setLead12thStream(e.target.value as any)}
-                      className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2 text-xs text-white cursor-pointer"
+                      className="w-full glass-input focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2 text-xs text-white cursor-pointer"
                     >
                       <option value="PCB">PCB (Bio)</option>
                       <option value="PCM">PCM (Maths)</option>
@@ -1278,7 +1278,7 @@ export default function SalesSimulatorView({
                   <div className="space-y-1">
                     <label className="text-[9px] font-mono text-[#a1a1aa] uppercase font-bold block flex justify-between">
                       <span>12th Marks</span>
-                      <span className="text-[#f59e0b] font-mono">{lead12thMarks}%</span>
+                      <span className="text-[#14b8a6] font-mono">{lead12thMarks}%</span>
                     </label>
                     <input
                       type="range"
@@ -1286,7 +1286,7 @@ export default function SalesSimulatorView({
                       max={100}
                       value={lead12thMarks}
                       onChange={(e) => setLead12thMarks(Number(e.target.value))}
-                      className="w-full accent-[#f59e0b] cursor-pointer bg-[#27272a] rounded-lg appearance-none h-1.5 mt-2"
+                      className="w-full accent-[#14b8a6] cursor-pointer glass-pill rounded-lg appearance-none h-1.5 mt-2"
                     />
                   </div>
                 </div>
@@ -1299,7 +1299,7 @@ export default function SalesSimulatorView({
                     <select
                       value={leadExamStatus}
                       onChange={(e) => setLeadExamStatus(e.target.value as any)}
-                      className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2 text-xs text-white cursor-pointer"
+                      className="w-full glass-input focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2 text-xs text-white cursor-pointer"
                     >
                       <option value="None">None</option>
                       <option value="NEET">NEET Exam</option>
@@ -1319,7 +1319,7 @@ export default function SalesSimulatorView({
                         max={720}
                         value={leadExamScore}
                         onChange={(e) => setLeadExamScore(Number(e.target.value))}
-                        className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white font-mono"
+                        className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-1.5 px-2.5 text-xs text-white font-mono"
                       />
                     </div>
                   )}
@@ -1333,15 +1333,15 @@ export default function SalesSimulatorView({
           </div>
 
           {/* Results Matcher Deck */}
-          <div className="md:col-span-7 bg-[#161618] border border-[#27272a]/80 shadow-inner rounded-2xl p-4 flex flex-col justify-between">
+          <div className="md:col-span-7 glass-panel shadow-inner rounded-2xl p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between border-b border-[#27272a]/40 pb-2.5 mb-2">
               <div className="flex items-center gap-2">
-                <span className="bg-[#f59e0b]/10 text-[#f59e0b] text-[9.5px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md border border-[#f59e0b]/20 font-mono">
+                <span className="bg-[#14b8a6]/10 text-[#14b8a6] text-[9.5px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md border border-[#14b8a6]/20 font-mono">
                   Closest Focus University Suggested
                 </span>
               </div>
               {nearestFocusCollegeResult && (
-                <div className="text-[11px] font-extrabold text-[#f59e0b] font-mono bg-[#f59e0b]/10 px-2.5 py-0.5 rounded-lg border border-[#f59e0b]/20">
+                <div className="text-[11px] font-extrabold text-[#14b8a6] font-mono bg-[#14b8a6]/10 px-2.5 py-0.5 rounded-lg border border-[#14b8a6]/20">
                   Distance: {nearestFocusCollegeResult.distance} km away
                 </div>
               )}
@@ -1407,9 +1407,9 @@ export default function SalesSimulatorView({
         <div className="lg:col-span-2 space-y-6">
           
           {/* Timeline workflow bar */}
-          <div className="bg-[#111113] border border-[#27272a] rounded-2xl p-4 shadow-lg overflow-x-auto">
+          <div className="glass-panel rounded-2xl p-4 shadow-lg overflow-x-auto">
             <div className="flex min-w-[700px] items-center justify-between relative">
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#27272a] z-0 -translate-y-1/2" />
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 glass-pill z-0 -translate-y-1/2" />
               {COUNSELLING_STEPS.map((step, idx) => {
                 const isActive = step.id === currentCounsellingStep;
                 const isPassed = step.id < currentCounsellingStep;
@@ -1426,7 +1426,7 @@ export default function SalesSimulatorView({
                   >
                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[11px] font-bold transition-all ${
                       isActive 
-                        ? 'bg-[#f59e0b] border-[#f59e0b] text-black shadow-md shadow-[#f59e0b]/20 scale-110' 
+                        ? 'bg-[#14b8a6] border-[#14b8a6] text-white shadow-md shadow-[#14b8a6]/20 scale-110' 
                         : isPassed
                         ? 'bg-[#10b981] border-[#10b981] text-white'
                         : 'bg-[#18181b] border-[#27272a] text-[#71717a] hover:border-[#a1a1aa]'
@@ -1434,7 +1434,7 @@ export default function SalesSimulatorView({
                       {step.id}
                     </div>
                     <span className={`text-[9px] font-mono font-semibold max-w-[65px] text-center leading-tight tracking-tight ${
-                      isActive ? 'text-[#f59e0b] font-bold' : 'text-[#71717a]'
+                      isActive ? 'text-[#14b8a6] font-bold' : 'text-[#71717a]'
                     }`}>
                       {step.title.split(':')[0]}
                     </span>
@@ -1445,10 +1445,10 @@ export default function SalesSimulatorView({
           </div>
 
           {/* Core Dialogue Card */}
-          <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-6 shadow-xl space-y-6 relative">
+          <div className="glass-panel rounded-3xl p-6 shadow-xl space-y-6 relative">
             <div className="flex justify-between items-start border-b border-[#27272a] pb-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-mono text-[#f59e0b] uppercase font-bold block">
+                <span className="text-[10px] font-mono text-[#14b8a6] uppercase font-extrabold block">
                   Counselling Script: Step {activeStep.id} of 11
                 </span>
                 <h3 className="text-white text-lg font-bold font-sans">
@@ -1459,7 +1459,7 @@ export default function SalesSimulatorView({
                 </p>
               </div>
 
-              <div className="bg-[#27272a]/40 border border-[#27272a] rounded-xl px-2.5 py-1 text-[9px] text-[#71717a] font-mono">
+              <div className="glass-pill/40 border border-[#27272a] rounded-xl px-2.5 py-1 text-[9px] text-[#71717a] font-mono">
                 PITCH TARGET: <strong className="text-white font-sans">{activeStep.role === 'Both' ? leadRelation : activeStep.role}</strong>
               </div>
             </div>
@@ -1485,8 +1485,8 @@ export default function SalesSimulatorView({
                         }}
                         className={`flex-1 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                           isSel 
-                            ? 'bg-[#f59e0b] text-black font-extrabold shadow-sm' 
-                            : 'text-[#a1a1aa] hover:text-white hover:bg-[#27272a]/30'
+                            ? 'bg-[#14b8a6] text-white font-extrabold shadow-sm' 
+                            : 'text-[#a1a1aa] hover:text-white hover:glass-pill/30'
                         }`}
                       >
                         {langOption.label}
@@ -1518,8 +1518,8 @@ export default function SalesSimulatorView({
                         }}
                         className={`flex-1 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                           isSel 
-                            ? 'bg-[#f59e0b] text-black font-extrabold shadow-sm' 
-                            : 'text-[#a1a1aa] hover:text-white hover:bg-[#27272a]/30'
+                            ? 'bg-[#14b8a6] text-white font-extrabold shadow-sm' 
+                            : 'text-[#a1a1aa] hover:text-white hover:glass-pill/30'
                         }`}
                       >
                         <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -1532,11 +1532,11 @@ export default function SalesSimulatorView({
             </div>
 
             {/* The Speech Box */}
-            <div className="p-5 bg-[#18181b] border border-[#27272a] rounded-2xl space-y-4 shadow-inner relative group min-h-[160px] flex flex-col justify-between">
+            <div className="p-5 glass-input rounded-2xl space-y-4 shadow-inner relative group min-h-[160px] flex flex-col justify-between">
               
               {isAiLoading ? (
                 <div className="flex flex-col items-center justify-center py-8 space-y-2 grow">
-                  <RefreshCw className="w-8 h-8 text-[#f59e0b] animate-spin" />
+                  <RefreshCw className="w-8 h-8 text-[#14b8a6] animate-spin" />
                   <span className="text-xs font-mono text-[#a1a1aa]">Optimizing script with direct LLM model...</span>
                 </div>
               ) : (
@@ -1574,10 +1574,10 @@ export default function SalesSimulatorView({
                     <button
                       onClick={() => speakText(getPersonalizedScript(activeStep, selectedTone))}
                       disabled={isAiLoading}
-                      className="px-3.5 py-1.5 bg-[#f59e0b] hover:bg-[#d97706] text-black disabled:opacity-50 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow transition-all cursor-pointer"
+                      className="px-3.5 py-1.5 bg-[#14b8a6] hover:bg-[#0f766e] text-white disabled:opacity-50 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow transition-all cursor-pointer"
                       title="Read advisor speech out loud using browser TTS engine"
                     >
-                      <Volume2 className="w-4 h-4 text-black" />
+                      <Volume2 className="w-4 h-4 text-white" />
                       Read Aloud (TTS)
                     </button>
                   )}
@@ -1587,10 +1587,10 @@ export default function SalesSimulatorView({
                     <button
                       onClick={() => triggerAiRewriteCompletions('script', activeStep.id, `Personalize this advisor counselling script: "${activeStep.scriptTemplate}" for student name "${leadName}", relation "${leadRelation}", in a highly persuasive tone of style: "${selectedTone}". Keep length concise.`)}
                       disabled={isAiLoading}
-                      className="px-3.5 py-1.5 border border-[#3f3f46] hover:border-[#f59e0b] bg-[#27272a]/40 hover:bg-[#27272a] text-[#e4e4e7] rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="px-3.5 py-1.5 border border-[#3f3f46] hover:border-[#14b8a6] glass-pill/40 hover:glass-pill text-[#e4e4e7] rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                       title="Optimize using the selected Groq/OpenRouter model"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#f59e0b]" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#14b8a6]" />
                       Improve with AI (LLM)
                     </button>
                   )}
@@ -1615,7 +1615,7 @@ export default function SalesSimulatorView({
                       setSelectedTone('Standard');
                       cancelSpeech();
                     }}
-                    className="p-1 px-3 bg-[#27272a] hover:bg-[#3f3f46] text-white rounded-lg text-xs font-bold cursor-pointer"
+                    className="p-1 px-3 glass-pill hover:bg-[#3f3f46] text-white rounded-lg text-xs font-bold cursor-pointer"
                   >
                     Next Step Progress
                   </button>
@@ -1625,7 +1625,7 @@ export default function SalesSimulatorView({
 
             {/* Core profiling screening questions help card */}
             <div className="p-4 bg-[#141416] border border-[#27272a] rounded-2xl space-y-2">
-              <h4 className="text-[10px] font-mono text-[#f59e0b] uppercase font-bold block flex items-center gap-1.5">
+              <h4 className="text-[10px] font-mono text-[#14b8a6] uppercase font-bold block flex items-center gap-1.5">
                 <HelpCircle className="w-3.5 h-3.5" />
                 Step-Related Profiling Probes Checklist
               </h4>
@@ -1652,9 +1652,9 @@ export default function SalesSimulatorView({
         <div className="space-y-6">
           
           {/* Objections Database Search Deck */}
-          <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-5 shadow-xl space-y-4">
+          <div className="glass-panel rounded-3xl p-5 shadow-xl space-y-4">
             <h4 className="text-white text-xs font-bold uppercase tracking-widest font-mono flex items-center gap-1.5">
-              <MessageSquare className="w-4 h-4 text-[#f59e0b]" />
+              <MessageSquare className="w-4 h-4 text-[#14b8a6]" />
               Objections Repo (50 Mapped Cases)
             </h4>
 
@@ -1667,7 +1667,7 @@ export default function SalesSimulatorView({
                   placeholder="Type category or keyword (e.g., Fees, MBBS)..."
                   value={conflictSearchQuery}
                   onChange={(e) => setConflictSearchQuery(e.target.value)}
-                  className="w-full bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 pl-9 pr-3 text-xs text-white"
+                  className="w-full glass-input hover:border-[#3f3f46] focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 pl-9 pr-3 text-xs text-white"
                 />
               </div>
 
@@ -1675,7 +1675,7 @@ export default function SalesSimulatorView({
                 aria-label="Filter objections by category"
                 value={conflictSelectedCategory}
                 onChange={(e) => setConflictSelectedCategory(e.target.value)}
-                className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
+                className="w-full glass-input focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
               >
                 <option value="All">All Categories ({OBJECTIONS.length})</option>
                 {parsedCategories.map(cat => (
@@ -1735,7 +1735,7 @@ export default function SalesSimulatorView({
                         <span className="text-[9px] text-[#71717a] font-mono uppercase block">{obj.category} &rsaquo; {obj.subCategory}</span>
                       </div>
                       <span className={`text-[8.5px] font-mono px-1.5 py-0.5 rounded ${
-                        obj.difficulty === 'Hard' ? 'bg-red-950/40 text-red-400' : 'bg-amber-950/40 text-[#f59e0b]'
+                        obj.difficulty === 'Hard' ? 'bg-red-950/40 text-red-400' : 'bg-[#14b8a6]/20 text-[#14b8a6]'
                       }`}>{obj.difficulty}</span>
                     </button>
                   );
@@ -1793,7 +1793,7 @@ export default function SalesSimulatorView({
                   <div className="p-2 bg-[#18181b] rounded-xl border border-[#27272a]">
                     <span className="text-[8.5px] font-mono text-[#71717a] uppercase font-bold block">Difficulty Level</span>
                     <span className={`font-mono text-xs font-semibold ${
-                      activeObjection.difficulty === 'Hard' ? 'text-red-500' : 'text-[#f59e0b]'
+                      activeObjection.difficulty === 'Hard' ? 'text-red-500' : 'text-[#14b8a6]'
                     }`}>{activeObjection.difficulty}</span>
                   </div>
                 </div>
@@ -1815,7 +1815,7 @@ export default function SalesSimulatorView({
                 </div>
 
                 {/* Counselor rebuttal dialogue */}
-                <div className="p-4 bg-[#18181b] border border-[#27272a] rounded-xl space-y-3 shadow-inner">
+                <div className="p-4 glass-input rounded-xl space-y-3 shadow-inner">
                   <div className="flex justify-between items-center text-[10px] font-mono">
                     <span className="text-green-400 font-bold block">💡 Elite Response Rebuttal Script:</span>
                     {customAIObjectionVariants[activeObjection.id] && (
@@ -1878,7 +1878,7 @@ export default function SalesSimulatorView({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="bg-[#111113] border border-[#27272a] rounded-3xl p-5 lg:p-6 shadow-xl space-y-4 text-center py-12"
+                className="glass-panel rounded-3xl p-5 lg:p-6 shadow-xl space-y-4 text-center py-12"
               >
                 <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto">
                   <AlertTriangle className="w-6 h-6 animate-pulse" />
@@ -1903,19 +1903,19 @@ export default function SalesSimulatorView({
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#111113] border border-[#27272a] w-full max-w-md rounded-3xl overflow-hidden shadow-2xl p-6 space-y-5"
+              className="glass-panel w-full max-w-md rounded-3xl overflow-hidden shadow-2xl p-6 space-y-5"
             >
               <div className="flex justify-between items-start border-b border-[#27272a] pb-4">
                 <div className="space-y-1">
                   <h3 className="text-white font-extrabold text-lg flex items-center gap-1.5 font-sans">
-                    <Settings className="w-5 h-5 text-[#f59e0b]" />
+                    <Settings className="w-5 h-5 text-[#14b8a6]" />
                     LLM Provider Configurations
                   </h3>
                   <p className="text-[#a1a1aa] text-xs">Configure Groq or OpenRouter keys locally.</p>
                 </div>
                 <button
                   onClick={() => setShowSettingsModal(false)}
-                  className="p-1 text-[#71717a] hover:text-white rounded-lg hover:bg-[#27272a]/30"
+                  className="p-1 text-[#71717a] hover:text-white rounded-lg hover:glass-pill/30"
                   aria-label="Close Settings"
                 >
                   <X className="w-4 h-4" />
@@ -1941,7 +1941,7 @@ export default function SalesSimulatorView({
                       setSelectedModel('local_fallback');
                     }
                   }}
-                  className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
+                  className="w-full glass-input focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
                 >
                   <option value="local">Local Rule Fallback (No Key Needed)</option>
                   <option value="groq">Groq Client Proxy</option>
@@ -1962,7 +1962,7 @@ export default function SalesSimulatorView({
                       placeholder="Paste your API key here (saved locally)"
                       value={modelApiKey}
                       onChange={(e) => setModelApiKey(e.target.value)}
-                      className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white font-mono"
+                      className="w-full glass-input focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-3 text-xs text-white font-mono"
                     />
                     <span className="text-[9.5px] text-[#71717a] leading-relaxed block">
                       Saved client-side within browser storage only. Keeps keys completely secure.
@@ -1979,7 +1979,7 @@ export default function SalesSimulatorView({
                       aria-label="Select Model"
                       value={selectedModel}
                       onChange={(e) => setSelectedModel(e.target.value)}
-                      className="w-full bg-[#18181b] border border-[#27272a] focus:border-[#f59e0b] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
+                      className="w-full glass-input focus:border-[#14b8a6] focus:outline-none rounded-xl py-2 px-3 text-xs text-white"
                     >
                       {modelProvider === 'groq' 
                         ? GROQ_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)
@@ -2002,7 +2002,7 @@ export default function SalesSimulatorView({
                       step="0.1"
                       value={aiTemperature}
                       onChange={(e) => setAiTemperature(Number(e.target.value))}
-                      className="w-full accent-[#f59e0b] bg-[#18181b] rounded-lg h-1"
+                      className="w-full accent-[#14b8a6] bg-[#18181b] rounded-lg h-1"
                     />
                   </div>
 
@@ -2034,7 +2034,7 @@ export default function SalesSimulatorView({
               <div className="pt-4 border-t border-[#27272a]">
                 <button
                   onClick={() => setShowSettingsModal(false)}
-                  className="w-full py-2.5 bg-[#f59e0b] hover:bg-[#d97706] text-black font-extrabold rounded-xl text-xs shadow cursor-pointer justify-center flex items-center gap-1.5"
+                  className="w-full py-2.5 bg-[#14b8a6] hover:bg-[#0f766e] text-white font-extrabold rounded-xl text-xs shadow cursor-pointer justify-center flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   Save Configurations & Return

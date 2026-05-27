@@ -91,8 +91,8 @@ export default function MapIndicator({
       className: 'custom-closest-marker',
       html: `
         <div style="position: relative; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
-          <div style="position: absolute; width: 24px; height: 24px; background-color: rgba(99, 102, 241, 0.2); border-radius: 50%; border: 1px solid rgba(99, 102, 241, 0.4); animation: marker-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-          <div style="position: absolute; width: 14px; height: 14px; background-color: #6366f1; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);"></div>
+          <div style="position: absolute; width: 24px; height: 24px; background-color: rgba(20, 184, 166, 0.2); border-radius: 50%; border: 1px solid rgba(20, 184, 166, 0.4); animation: marker-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="position: absolute; width: 14px; height: 14px; background-color: #14b8a6; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(20, 184, 166, 0.8);"></div>
         </div>
       `,
       iconSize: [34, 34],
@@ -115,8 +115,8 @@ export default function MapIndicator({
       className: 'custom-search-marker',
       html: `
         <div style="position: relative; width: 38px; height: 44px; display: flex; flex-direction: column; align-items: center;">
-          <div style="position: absolute; bottom: 0; width: 10px; height: 10px; background-color: rgba(244, 63, 94, 0.4); border-radius: 50%; filter: blur(2px);"></div>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#f43f5e" stroke="white" stroke-width="1.5" style="width: 28px; height: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">
+          <div style="position: absolute; bottom: 0; width: 10px; height: 10px; background-color: rgba(20, 184, 166, 0.4); border-radius: 50%; filter: blur(2px);"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#14b8a6" stroke="white" stroke-width="1.5" style="width: 28px; height: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
         </div>
@@ -145,7 +145,7 @@ export default function MapIndicator({
         <div style="font-family: inherit; font-size: 11px; padding: 4px;" class="select-none text-white">
           <strong style="color: #fff; font-size: 11px;">${col.name}</strong><br/>
           <span style="color: #a1a1aa; font-size: 9.5px; font-weight: 500;">📍 ${col.city}, ${col.state}</span>
-          ${isClosest ? '<div style="color: #818cf8; font-weight: bold; margin-top: 2px; font-size: 9px; font-family: monospace;">★ CLOSEST CAMPUS</div>' : ''}
+          ${isClosest ? '<div style="color: #22d3ee; font-weight: bold; margin-top: 2px; font-size: 9px; font-family: monospace;">★ CLOSEST CAMPUS</div>' : ''}
           ${isSelected ? '<div style="color: #34d399; font-weight: bold; margin-top: 2px; font-size: 9px; font-family: monospace;">✓ SELECTED NOW</div>' : ''}
         </div>
       `;
@@ -172,7 +172,7 @@ export default function MapIndicator({
       const searchMarker = L.marker(beaconCoords, { icon: searchBeaconIcon })
         .bindTooltip(`
           <div style="font-family: inherit; font-size: 11px;" class="select-none font-bold text-white px-1">
-            🔍 TARGET SEARCH: <span style="color: #f43f5e;">${searchedLocation.name}</span>
+            🔍 TARGET SEARCH: <span style="color: #06b6d4;">${searchedLocation.name}</span>
           </div>
         `, {
           direction: 'top',
@@ -191,7 +191,7 @@ export default function MapIndicator({
         
         // Flight route geodesic polyline
         const routePolyline = L.polyline([beaconCoords, targetCoords], {
-          color: '#f59e0b',
+          color: '#06b6d4',
           weight: 3.5,
           opacity: 0.85,
           dashArray: '8, 8'
@@ -210,12 +210,12 @@ export default function MapIndicator({
         const routeNodeIcon = L.divIcon({
           className: 'distance-overlay-node',
           html: `
-            <div class="px-2.5 py-1 bg-[#111113] border border-[#f59e0b]/40 rounded-lg text-[9px] uppercase font-mono font-bold tracking-wide shadow-2xl shadow-black select-none whitespace-nowrap text-[#f59e0b]">
+            <div class="px-2.5 py-1 bg-[#0c0f1d] border border-[#06b6d4]/40 rounded-lg text-[9px] uppercase font-mono font-bold tracking-wide shadow-2xl shadow-black select-none whitespace-nowrap text-[#06b6d4]">
               ⚡ ${distanceKm} KM
             </div>
           `,
-          iconSize: [90, 26],
-          iconAnchor: [45, 13]
+          iconSize: [95, 26],
+          iconAnchor: [47, 13]
         });
 
         const routeBadge = L.marker([midLat, midLng], { icon: routeNodeIcon });
@@ -272,12 +272,12 @@ export default function MapIndicator({
   const spotlightCollege = selectedCollege || nearestCollege;
 
   return (
-    <div className="relative border border-[#27272a] bg-[#111113] rounded-3xl p-5 shadow-xl flex flex-col h-[750px] overflow-hidden select-none">
+    <div className="relative glass-panel rounded-3xl p-5 shadow-xl flex flex-col h-[750px] overflow-hidden select-none">
       
       {/* Dynamic styling inject overrides for Leaflet container styling */}
       <style>{`
         .styled-leaflet-tooltip .leaflet-tooltip {
-          background-color: #181c24 !important;
+          background-color: #111524 !important;
           border: 1px solid #334155 !important;
           color: #f8fafc !important;
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7) !important;
@@ -286,20 +286,20 @@ export default function MapIndicator({
           white-space: nowrap !important;
         }
         .styled-leaflet-tooltip .leaflet-tooltip::before {
-          border-top-color: #181c24 !important;
+          border-top-color: #111524 !important;
         }
         .styled-leaflet-tooltip-rose .leaflet-tooltip {
-          background-color: #e11d48 !important;
-          border: 1px solid #f43f5e !important;
+          background-color: #14b8a6 !important;
+          border: 1px solid #2dd4bf !important;
           color: #fff !important;
-          box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.45) !important;
+          box-shadow: 0 10px 15px -3px rgba(20, 184, 166, 0.45) !important;
           border-radius: 6px !important;
           font-weight: 700 !important;
           padding: 4px 8px !important;
           white-space: nowrap !important;
         }
         .styled-leaflet-tooltip-rose .leaflet-tooltip::before {
-          border-top-color: #e11d48 !important;
+          border-top-color: #14b8a6 !important;
         }
         .leaflet-container {
           font-family: inherit !important;
@@ -319,11 +319,11 @@ export default function MapIndicator({
       {/* Map Control Board header */}
       <div className="flex justify-between items-center mb-4 z-20">
         <div className="flex items-center gap-2">
-          <Compass className="w-5 h-5 text-[#f59e0b] animate-spin-slow" />
+          <Compass className="w-5 h-5 text-teal-400 animate-spin-slow" />
           <h3 className="font-sans font-bold text-white flex items-center gap-1.5 text-base">
             Geo-Proximity Navigator
             {searchedLocation && (
-              <span className="text-[10px] font-semibold text-[#f59e0b] bg-[#f59e0b]/10 px-2 rounded-full border border-[#f59e0b]/20">
+              <span className="text-[10px] font-semibold text-teal-400 bg-teal-500/10 px-2 rounded-full border border-teal-500/20">
                 Live Proximity
               </span>
             )}
@@ -331,19 +331,19 @@ export default function MapIndicator({
         </div>
 
         {/* View Toggle tabs */}
-        <div className="flex bg-[#18181b] p-0.5 rounded-lg border border-[#27272a] text-[11px] font-semibold select-none">
+        <div className="flex glass-input p-0.5 rounded-lg text-[11px] font-semibold select-none">
           <button
             onClick={() => setActiveTab('map')}
-            className={`px-3 py-1 rounded-md transition-all ${
-              activeTab === 'map' ? 'bg-[#27272a] text-white' : 'text-[#a1a1aa] hover:text-white'
+            className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+              activeTab === 'map' ? 'bg-teal-500/20 border border-teal-500/20 text-teal-400' : 'text-[#a1a1aa] hover:text-white'
             }`}
           >
             Digital Map
           </button>
           <button
             onClick={() => setActiveTab('details')}
-            className={`px-3 py-1 rounded-md transition-all ${
-              activeTab === 'details' ? 'bg-[#27272a] text-white' : 'text-[#a1a1aa] hover:text-white'
+            className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+              activeTab === 'details' ? 'bg-teal-500/20 border border-teal-500/20 text-teal-400' : 'text-[#a1a1aa] hover:text-white'
             }`}
           >
             Route Spotlight
@@ -352,7 +352,7 @@ export default function MapIndicator({
       </div>
 
       {/* Main Map Deck / Route Spotlight content panes */}
-      <div className="relative flex-1 rounded-2xl overflow-hidden border border-[#27272a] bg-[#09090b] flex flex-col justify-between">
+      <div className="relative flex-1 rounded-2xl overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-md flex flex-col justify-between">
         
         {/* VIEW 1: Interactive physical Leaflet map */}
         <div 
@@ -365,18 +365,18 @@ export default function MapIndicator({
 
         {/* VIEW 2: Spotlight proximity details */}
         {activeTab === 'details' && (
-          <div className="w-full h-full flex flex-col justify-center items-center bg-[#111113] p-8 text-center select-text overflow-y-auto">
+          <div className="w-full h-full flex flex-col justify-center items-center bg-slate-950/20 backdrop-blur-md p-8 text-center select-text overflow-y-auto">
             {spotlightCollege ? (
               <div className="max-w-md space-y-5">
-                <div className="inline-flex p-3 bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/20 rounded-full">
+                <div className="inline-flex p-3 bg-teal-500/10 text-teal-400 border border-teal-500/20 rounded-full">
                   <Navigation className="w-8 h-8 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-bold text-[#f59e0b] tracking-widest uppercase font-mono">
+                  <h4 className="text-[11px] font-bold text-teal-400 tracking-widest uppercase font-mono">
                     {searchedLocation ? 'Proximity Match Spotlight' : 'Featured Campus'}
                   </h4>
                   <h3 className="text-xl font-bold text-white mt-1 leading-snug">
-                    {spotlightCollege.name}
+                     {spotlightCollege.name}
                   </h3>
                   <p className="text-[#a1a1aa] text-sm mt-1">
                     📍 {spotlightCollege.address}, {spotlightCollege.city}, {spotlightCollege.state}
@@ -384,10 +384,10 @@ export default function MapIndicator({
                 </div>
 
                 {searchedLocation && spotlightDistance && (
-                  <div className="bg-[#18181b] border border-[#27272a] rounded-2xl p-4 flex justify-between items-center text-left">
+                  <div className="glass-input rounded-2xl p-4 flex justify-between items-center text-left">
                     <div>
                       <span className="text-[10px] text-[#71717a] block font-mono">COMPUTED DISTANCE</span>
-                      <strong className="text-2xl font-bold text-[#fbbf24] tracking-tight">
+                      <strong className="text-2xl font-bold text-teal-400 tracking-tight">
                         {spotlightDistance} <span className="text-xs font-sans text-white">KM away</span>
                       </strong>
                     </div>
@@ -400,7 +400,7 @@ export default function MapIndicator({
                   </div>
                 )}
 
-                <div className="border border-[#27272a] rounded-2xl p-3 text-left space-y-2 bg-[#09090b]">
+                <div className="glass-pill rounded-2xl p-3 text-left space-y-2">
                   <div className="flex items-center gap-2 text-xs">
                     <span className="text-[#a1a1aa] font-medium w-28">NAAC Tier:</span>
                     <span className="text-emerald-500 font-semibold flex items-center gap-1">
@@ -409,12 +409,12 @@ export default function MapIndicator({
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <span className="text-[#a1a1aa] font-medium w-28">Avg Placement:</span>
-                    <span className="text-[#f59e0b] font-bold">{spotlightCollege.avgPlacementPackage} LPA expected package</span>
+                    <span className="text-teal-400 font-bold">{spotlightCollege.avgPlacementPackage} LPA expected package</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
                     <span className="font-medium w-28 text-slate-400">Campus Manager:</span>
                     <span className="flex items-center gap-1 font-mono text-xs text-white">
-                      <User className="w-3 h-3 text-[#f59e0b]" /> {spotlightCollege.campusManager || 'N/A'}
+                      <User className="w-3 h-3 text-teal-400" /> {spotlightCollege.campusManager || 'N/A'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
@@ -445,7 +445,7 @@ export default function MapIndicator({
           <div className="absolute top-4 right-4 flex flex-col gap-1.5 z-20 pointer-events-auto">
             <button
               onClick={handleMapZoomIn}
-              className="p-2.5 bg-[#18181b]/95 hover:bg-[#27272a] border border-[#27272a] text-[#a1a1aa] hover:text-white rounded-lg shadow-lg hover:shadow-black/70 transition-all cursor-pointer block"
+              className="p-2.5 glass-input hover:bg-white/5 text-[#a1a1aa] hover:text-white rounded-lg shadow-lg hover:shadow-black/70 transition-all cursor-pointer block"
               title="Zoom In"
               id="leaflet-zoom-in"
             >
@@ -472,9 +472,9 @@ export default function MapIndicator({
 
         {/* Spotlight proximity card overlay (Quick Glance Card inside the map viewport) */}
         {activeTab === 'map' && spotlightCollege && (
-          <div className="absolute top-4 left-4 max-w-[280px] bg-[#09090b]/95 text-white p-3.5 rounded-2xl border border-[#27272a] shadow-2xl backdrop-blur-md z-20 pointer-events-auto space-y-2">
+          <div className="absolute top-4 left-4 max-w-[280px] glass-panel text-white p-3.5 rounded-2xl shadow-2xl backdrop-blur-md z-20 pointer-events-auto space-y-2">
             <div>
-              <span className="text-[9px] font-bold text-[#f59e0b] block tracking-wider uppercase font-mono">
+              <span className="text-[9px] font-bold text-teal-400 block tracking-wider uppercase font-mono">
                 {searchedLocation ? 'Nearest Match Proximity' : 'Selected Campus'}
               </span>
               <h4 className="text-xs font-bold font-sans tracking-tight text-white leading-tight mt-0.5 line-clamp-1">
@@ -486,17 +486,17 @@ export default function MapIndicator({
             </div>
 
             {searchedLocation && spotlightDistance && (
-              <div className="bg-[#18181b] border border-[#27272a] rounded-xl px-2.5 py-1.5 flex justify-between items-center text-xs font-mono">
+              <div className="glass-input rounded-xl px-2.5 py-1.5 flex justify-between items-center text-xs font-mono">
                 <span className="text-[#a1a1aa] text-[9.5px]">DISTANCE:</span>
-                <span className="text-[#fbbf24] font-bold tracking-tight">
+                <span className="text-teal-400 font-bold tracking-tight">
                   ⚡ {spotlightDistance} KM
                 </span>
               </div>
             )}
 
             <button
-              onClick={() => setActiveTab('details')}
-              className="w-full text-center py-1.5 bg-[#27272a] hover:bg-[#3f3f46] text-white rounded-lg text-[10px] font-semibold transition-all cursor-pointer"
+               onClick={() => setActiveTab('details')}
+              className="w-full text-center py-1.5 bg-teal-500/20 border border-teal-500/20 hover:bg-teal-500/30 text-teal-300 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
             >
               Analyze Route Details
             </button>
@@ -505,18 +505,18 @@ export default function MapIndicator({
 
         {/* Map Legend (Floating in map bounds at bottom) */}
         {activeTab === 'map' && (
-          <div className="absolute bottom-4 left-4 right-4 bg-[#09090b]/92 text-[#e4e4e7] p-3 rounded-xl border border-[#27272a] backdrop-blur-md flex flex-wrap justify-between items-center gap-3 text-xs z-20 pointer-events-auto">
+          <div className="absolute bottom-4 left-4 right-4 glass-panel text-white p-3 rounded-xl backdrop-blur-md flex flex-wrap justify-between items-center gap-3 text-xs z-20 pointer-events-auto">
             <div className="flex gap-4">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 bg-[#10b981] rounded-full inline-block animate-pulse"></span>
                 <span>Selected</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-[#6366f1] rounded-full inline-block animate-pulse"></span>
+                <span className="w-2.5 h-2.5 bg-[#14b8a6] rounded-full inline-block animate-pulse"></span>
                 <span>Closest</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-[#f43f5e] rounded-full inline-block"></span>
+                <span className="w-2.5 h-2.5 bg-[#14b8a6] rounded-full inline-block"></span>
                 <span>Searched</span>
               </div>
             </div>

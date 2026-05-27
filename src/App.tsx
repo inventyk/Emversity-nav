@@ -931,16 +931,34 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-[#e4e4e7] font-sans antialiased pb-12 selection:bg-[#f59e0b] selection:text-black">
+    <div className="relative min-h-screen text-[#f1f5f9] font-sans antialiased pb-12 selection:bg-[#20b2aa] selection:text-black">
+      {/* 2026 Cinematic Cosmic Glass Background - Perfectly Clear and Beautiful */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-slate-950">
+        <video
+          className="absolute inset-0 w-full h-full object-cover opacity-95 brightness-[1.1] saturate-[1.2]"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4" />
+        </video>
+        {/* Soft elegant glass ambient shading with perfect background transparency */}
+        <div className="absolute inset-0 bg-slate-950/20 backdrop-brightness-105 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/15 to-slate-950/40" />
+        <div className="absolute top-[10%] left-[20%] w-[35%] h-[40%] bg-teal-600/15 rounded-full blur-[140px] animate-float-cloud" />
+        <div className="absolute bottom-[20%] right-[10%] w-[40%] h-[45%] bg-[#0f766e]/12 rounded-full blur-[150px] animate-float-cloud" style={{ animationDelay: '4s', animationDuration: '20s' }} />
+      </div>
+
       {/* 1. Interactive Control Header Bar */}
-      <header className="sticky top-0 bg-[#09090b]/80 backdrop-blur-md border-b border-[#27272a] z-30 shadow-lg transition-all">
+      <header className="sticky top-0 bg-slate-900/40 backdrop-blur-lg border-b border-white/5 z-30 shadow-md transition-all relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#27272a] rounded-2xl shadow-lg text-[#f59e0b]">
+            <div className="p-2.5 glass-pill rounded-2xl shadow-lg text-[#14b8a6]">
               <Compass className="w-6 h-6 animate-spin-slow" />
             </div>
             <div>
-              <h1 className="font-serif italic text-[#f59e0b] tracking-tight text-xl">
+              <h1 className="font-serif italic text-[#14b8a6] tracking-tight text-xl">
                 Emversity <span className="text-white font-sans not-italic font-bold">Campus Navigator</span>
               </h1>
               <p className="text-[10px] text-[#71717a] font-mono tracking-wide uppercase">
@@ -952,12 +970,12 @@ export default function App() {
           {/* Global Page Switcher & Settings */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Switche Tab Deck */}
-            <div className="flex items-center bg-[#18181b] border border-[#27272a] rounded-xl p-1 gap-1 shadow-inner overflow-hidden">
+            <div className="flex items-center glass-input rounded-xl p-1 gap-1 shadow-inner overflow-hidden">
               <button
                 onClick={() => setActiveView('navigator')}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeView === 'navigator'
-                    ? 'bg-[#f59e0b] text-black font-extrabold shadow-md'
+                    ? 'bg-[#14b8a6]/25 border border-[#14b8a6]/45 text-[#2dd4bf] font-extrabold shadow-lg backdrop-blur-md'
                     : 'text-[#a1a1aa] hover:text-white'
                 }`}
               >
@@ -968,7 +986,7 @@ export default function App() {
                 onClick={() => setActiveView('simulator')}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeView === 'simulator'
-                    ? 'bg-[#f59e0b] text-black font-extrabold shadow-md'
+                    ? 'bg-[#14b8a6]/25 border border-[#14b8a6]/45 text-[#2dd4bf] font-extrabold shadow-lg backdrop-blur-md'
                     : 'text-[#a1a1aa] hover:text-white'
                 }`}
               >
@@ -982,17 +1000,17 @@ export default function App() {
             {/* AI Control Buttons */}
             <button
               onClick={() => setShowSettingsModal(true)}
-              className="p-2 border border-[#3f3f46] hover:border-[#f59e0b] bg-[#18181b] hover:bg-[#27272a]/50 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer relative"
+              className="p-2 border border-[#3f3f46] hover:border-[#14b8a6] bg-[#18181b] hover:glass-pill/50 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer relative"
               title="Configure Groq / OpenRouter AI Keys"
             >
-              <Settings className="w-4 h-4 text-[#f59e0b] animate-spin-slow" />
+              <Settings className="w-4 h-4 text-[#14b8a6] animate-spin-slow" />
               <span className="hidden sm:inline">LLM Settings</span>
               {modelProvider !== 'local' && (
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
               )}
             </button>
 
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#a1a1aa] bg-[#27272a]/20 border border-[#27272a] rounded-full px-3 py-1 font-semibold">
+            <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#a1a1aa] glass-pill/20 border border-[#27272a] rounded-full px-3 py-1 font-semibold">
               <ShieldCheck className="w-3.5 h-3.5 text-[#10b981]" />
               Admission 2026 Batch Active
             </div>
@@ -1001,13 +1019,13 @@ export default function App() {
       </header>
 
       {/* 2. Top Metric Boards */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {activeView === 'navigator' ? (
           <>
             <MetricCards colleges={COLLEGES} />
 
         {/* 3. Interactive Location & College Selection Core */}
-        <section className="border border-[#27272a] bg-[#111113] shadow-lg rounded-3xl p-6 relative overflow-hidden">
+        <section className="glass-panel shadow-lg rounded-3xl p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
             <Navigation className="w-24 h-24 text-white" />
           </div>
@@ -1021,11 +1039,11 @@ export default function App() {
               }}
               className={`pb-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 font-mono flex items-center gap-2 cursor-pointer ${
                 searchMode === 'proximity'
-                  ? 'border-[#f59e0b] text-[#f59e0b]'
+                  ? 'border-[#14b8a6] text-[#14b8a6]'
                   : 'border-transparent text-[#71717a] hover:text-[#a1a1aa]'
               }`}
             >
-              <MapPin className="w-4 h-4 text-[#f59e0b]" />
+              <MapPin className="w-4 h-4 text-[#14b8a6]" />
               1. Hometown Proximity Finder
             </button>
             <button
@@ -1034,11 +1052,11 @@ export default function App() {
               }}
               className={`pb-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 font-mono flex items-center gap-2 cursor-pointer ${
                 searchMode === 'direct'
-                  ? 'border-[#f59e0b] text-[#f59e0b]'
+                  ? 'border-[#14b8a6] text-[#14b8a6]'
                   : 'border-transparent text-[#71717a] hover:text-[#a1a1aa]'
               }`}
             >
-              <GraduationCap className="w-4 h-4 text-[#f59e0b]" />
+              <GraduationCap className="w-4 h-4 text-[#14b8a6]" />
               2. Search College Directly (Database)
             </button>
           </div>
@@ -1046,7 +1064,7 @@ export default function App() {
           {searchMode === 'proximity' ? (
             <>
               <div className="max-w-3xl">
-                <span className="text-xs font-bold text-[#f59e0b] uppercase tracking-widest font-mono">
+                <span className="text-xs font-bold text-[#14b8a6] uppercase tracking-widest font-mono">
                   Proximity Finder
                 </span>
                 <h2 className="font-sans text-2xl font-extrabold text-white tracking-tight mt-1">
@@ -1070,24 +1088,24 @@ export default function App() {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleLocationSearch(searchInput);
                       }}
-                      className="w-full pl-11 pr-4 py-3.5 bg-[#18181b] border border-[#3f3f46] focus:border-[#f59e0b] focus:bg-[#111113] rounded-2xl text-sm font-medium outline-none transition-all text-white placeholder-[#71717a]"
+                      className="w-full pl-11 pr-4 py-3.5 glass-input focus:border-[#14b8a6] focus:bg-[#0c0f1d] rounded-2xl text-sm font-medium outline-none transition-all text-white placeholder-[#71717a]"
                       id="proximity-search-input"
                     />
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={handleGpsLocation}
-                      className="px-4 py-3.5 bg-[#1e1b4b] text-[#818cf8] border border-[#312e81] hover:bg-[#312e81] rounded-2xl text-sm font-semibold shadow-md transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-3.5 bg-[#115e59]/20 text-[#2dd4bf] border border-[#14b8a6]/30 hover:bg-[#115e59]/30 rounded-2xl text-sm font-semibold shadow-md transition-colors cursor-pointer flex items-center gap-1.5"
                       title="Use My GPS Location"
                       id="btn-trigger-gps"
                     >
-                      <MapPin className="w-4 h-4 text-[#818cf8]" />
+                      <MapPin className="w-4 h-4 text-[#2dd4bf]" />
                       <span>GPS</span>
                     </button>
                     <button
                       disabled={isGeocoding}
                       onClick={() => handleLocationSearch(searchInput)}
-                      className="px-6 py-3.5 bg-[#f59e0b] text-[#09090b] rounded-2xl text-sm font-bold hover:bg-[#fbbf24] disabled:opacity-50 shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                      className="px-6 py-3.5 bg-[#14b8a6]/20 text-[#2dd4bf] border border-[#14b8a6]/45 hover:bg-[#14b8a6]/30 rounded-2xl text-sm font-bold disabled:opacity-50 shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 backdrop-blur-md"
                       id="btn-trigger-geocode"
                     >
                       {isGeocoding ? (
@@ -1102,7 +1120,7 @@ export default function App() {
                     {searchedLocation && (
                       <button
                         onClick={handleClearLocation}
-                        className="p-3.5 bg-[#27272a] text-[#f43f5e] border border-[#3f3f46] hover:bg-[#3f3f46] rounded-2xl transition-colors cursor-pointer"
+                        className="p-3.5 glass-pill text-[#f43f5e] border border-[#3f3f46] hover:bg-[#3f3f46] rounded-2xl transition-colors cursor-pointer"
                         title="Clear locate search"
                         id="btn-clear-geocode"
                       >
@@ -1117,31 +1135,31 @@ export default function App() {
                   <span>Quick Suggestions:</span>
                   <button
                     onClick={() => handleLocationSearch('Pune')}
-                    className="px-2.5 py-1 bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
+                    className="px-2.5 py-1 glass-pill hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
                   >
                     📍 Pune, MH (Ajeenkya & Alard)
                   </button>
                   <button
                     onClick={() => handleLocationSearch('Vasai')}
-                    className="px-2.5 py-1 bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
+                    className="px-2.5 py-1 glass-pill hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
                   >
                     📍 Vasai, Mumbai (Universal)
                   </button>
                   <button
                     onClick={() => handleLocationSearch('Kopargaon')}
-                    className="px-2.5 py-1 bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
+                    className="px-2.5 py-1 glass-pill hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
                   >
                     📍 Kopargaon, MH (Sanjivani)
                   </button>
                   <button
                     onClick={() => handleLocationSearch('Indore')}
-                    className="px-2.5 py-1 bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
+                    className="px-2.5 py-1 glass-pill hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white border border-[#3f3f46] rounded-lg transition-all cursor-pointer"
                   >
                     📍 Indore, MP (Medi-Caps)
                   </button>
                   <button
                     onClick={() => handleLocationSearch('Kashmir')}
-                    className="px-3 py-1 bg-[#311d4d] hover:bg-[#43236e] text-[#d8b4fe] hover:text-purple border border-[#581c87] rounded-lg transition-all cursor-pointer"
+                    className="px-3 py-1 bg-teal-950/45 hover:bg-teal-900/40 text-teal-300 hover:text-white border border-teal-500/20 rounded-lg transition-all cursor-pointer"
                   >
                     ❄️ Kashmir (J&K Search)
                   </button>
@@ -1151,7 +1169,7 @@ export default function App() {
           ) : (
             <>
               <div className="max-w-3xl">
-                <span className="text-xs font-bold text-[#f59e0b] uppercase tracking-widest font-mono">
+                <span className="text-xs font-bold text-[#14b8a6] uppercase tracking-widest font-mono">
                   Direct Database Selection
                 </span>
                 <h2 className="font-sans text-2xl font-extrabold text-white tracking-tight mt-1">
@@ -1171,7 +1189,7 @@ export default function App() {
                     placeholder="Type name, city or state of the college here (e.g. Sanjivani, St. Peters, Yenepoya)..."
                     value={directSearchInput}
                     onChange={(e) => setDirectSearchInput(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-[#18181b] border border-[#3f3f46] focus:border-[#f59e0b] focus:bg-[#111113] rounded-2xl text-sm font-medium outline-none transition-all text-white placeholder-[#71717a]"
+                    className="w-full pl-11 pr-4 py-3.5 glass-input focus:border-[#14b8a6] focus:bg-[#0c0f1d] rounded-2xl text-sm font-medium outline-none transition-all text-white placeholder-[#71717a]"
                     id="direct-college-search-input"
                   />
                 </div>
@@ -1181,7 +1199,7 @@ export default function App() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-[#18181b] border border-[#27272a] rounded-2xl max-h-[280px] overflow-y-auto space-y-2 custom-scrollbar"
+                    className="p-4 glass-input rounded-2xl max-h-[280px] overflow-y-auto space-y-2 custom-scrollbar"
                   >
                     <p className="text-[10px] uppercase font-mono tracking-wider text-[#71717a] font-bold">
                       Matching College Entries ({directMatchedColleges.length})
@@ -1209,7 +1227,7 @@ export default function App() {
                               setSortBy('distance');
                               setDirectSearchInput('');
                             }}
-                            className="p-3 bg-[#111113] hover:bg-[#27272a] border border-[#27272a] hover:border-[#3f3f46] rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all"
+                            className="p-3 bg-[#0c0f1d] hover:glass-pill border border-[#27272a] hover:border-[#3f3f46] rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all"
                           >
                             <div className="space-y-0.5">
                               <span className="text-xs font-bold text-white block truncate max-w-[280px]">
@@ -1219,7 +1237,7 @@ export default function App() {
                                 📍 {colVal.city}, {colVal.state}
                               </span>
                             </div>
-                            <span className="text-[10px] font-bold text-[#f59e0b] hover:text-[#fbbf24] flex items-center gap-1 shrink-0">
+                            <span className="text-[10px] font-bold text-[#14b8a6] hover:text-[#2dd4bf] flex items-center gap-1 shrink-0">
                               Select <ExternalLink className="w-3 h-3" />
                             </span>
                           </div>
@@ -1239,7 +1257,7 @@ export default function App() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="p-3 mt-4 bg-[#111113] border border-[#f59e0b]/30 text-[#f59e0b] text-xs font-sans rounded-xl flex items-center justify-between"
+                className="p-3 mt-4 bg-[#0c0f1d] border border-[#14b8a6]/30 text-[#14b8a6] text-xs font-sans rounded-xl flex items-center justify-between"
               >
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-[#10b981]" />
@@ -1262,22 +1280,22 @@ export default function App() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Extended Multi-category filter board */}
-            <div className="border border-[#27272a] bg-[#111113] rounded-3xl p-6 shadow-lg">
+            <div className="glass-panel rounded-3xl p-6 shadow-lg">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-[#27272a]">
                 <div className="flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-[#f59e0b]" />
+                  <Filter className="w-5 h-5 text-[#14b8a6]" />
                   <h3 className="font-sans font-bold text-white text-base">
                     Search Filters & Criteria
                   </h3>
                 </div>
 
                 {/* Focus 5 toggle switch */}
-                <div className="flex items-center gap-2.5 bg-[#18181b] border border-[#27272a] px-3 py-1.5 rounded-2xl self-start sm:self-auto">
-                  <span className="text-[11px] font-semibold text-[#f59e0b] tracking-wide uppercase">Focus 5 Partner Colleges</span>
+                <div className="flex items-center gap-2.5 glass-input px-3 py-1.5 rounded-2xl self-start sm:self-auto">
+                  <span className="text-[11px] font-semibold text-[#14b8a6] tracking-wide uppercase">Focus 5 Partner Colleges</span>
                   <button
                     onClick={() => setFocusOnlyFilter(!focusOnlyFilter)}
                     className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      focusOnlyFilter ? 'bg-[#f59e0b]' : 'bg-[#3f3f46]'
+                      focusOnlyFilter ? 'bg-[#14b8a6]' : 'bg-[#3f3f46]'
                     }`}
                     id="toggle-focus-colleges"
                     title="Toggle Focus 5 Partner Colleges Filter"
@@ -1292,11 +1310,11 @@ export default function App() {
               </div>
 
               {focusOnlyFilter && (
-                <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs rounded-xl flex items-center justify-between">
+                <div className="mb-4 p-3 bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs rounded-xl flex items-center justify-between">
                   <span>Currently showing only the <strong>5 Focus Partner Colleges</strong> (Ajeenkya, Alard, Universal, Sanjivani, MediCaps). Toggle off to view all 23 campuses.</span>
                   <button 
                     onClick={() => setFocusOnlyFilter(false)} 
-                    className="text-[10px] uppercase font-bold tracking-wider text-[#f59e0b] hover:underline hover:text-amber-200 ml-2"
+                    className="text-[10px] uppercase font-bold tracking-wider text-[#14b8a6] hover:underline hover:text-teal-200 ml-2"
                   >
                     Show All
                   </button>
@@ -1311,14 +1329,14 @@ export default function App() {
                   <select
                     value={regionFilter}
                     onChange={(e) => { setRegionFilter(e.target.value); setStateFilter('All'); }}
-                    className="w-full p-2.5 bg-[#18181b] border border-[#3f3f46] text-white rounded-xl text-xs outline-none focus:border-[#f59e0b] cursor-pointer"
+                    className="w-full p-2.5 glass-input text-white rounded-xl text-xs outline-none focus:border-[#14b8a6] cursor-pointer"
                     id="filter-region-select"
                   >
-                    <option value="All" className="bg-[#111113]">All Regions</option>
-                    <option value="South" className="bg-[#111113]">South India</option>
-                    <option value="North" className="bg-[#111113]">North India</option>
-                    <option value="West" className="bg-[#111113]">West India</option>
-                    <option value="East" className="bg-[#111113]">East India</option>
+                    <option value="All" className="bg-[#0c0f1d]">All Regions</option>
+                    <option value="South" className="bg-[#0c0f1d]">South India</option>
+                    <option value="North" className="bg-[#0c0f1d]">North India</option>
+                    <option value="West" className="bg-[#0c0f1d]">West India</option>
+                    <option value="East" className="bg-[#0c0f1d]">East India</option>
                   </select>
                 </div>
 
@@ -1328,10 +1346,10 @@ export default function App() {
                   <select
                     value={stateFilter}
                     onChange={(e) => setStateFilter(e.target.value)}
-                    className="w-full p-2.5 bg-[#18181b] border border-[#3f3f46] text-white rounded-xl text-xs outline-none focus:border-[#f59e0b] cursor-pointer"
+                    className="w-full p-2.5 glass-input text-white rounded-xl text-xs outline-none focus:border-[#14b8a6] cursor-pointer"
                     id="filter-state-select"
                   >
-                    <option value="All" className="bg-[#111113]">All States (Any)</option>
+                    <option value="All" className="bg-[#0c0f1d]">All States (Any)</option>
                     {uniqueStates
                       .filter(st => {
                         if (regionFilter === 'All') return true;
@@ -1340,7 +1358,7 @@ export default function App() {
                         return collegesInSt.some(c => c.region === regionFilter);
                       })
                       .map(st => (
-                        <option key={st} value={st} className="bg-[#111113]">{st}</option>
+                        <option key={st} value={st} className="bg-[#0c0f1d]">{st}</option>
                       ))}
                   </select>
                 </div>
@@ -1351,12 +1369,12 @@ export default function App() {
                   <select
                     value={programFilter}
                     onChange={(e) => setProgramFilter(e.target.value)}
-                    className="w-full p-2.5 bg-[#18181b] border border-[#3f3f46] text-white rounded-xl text-xs outline-none focus:border-[#f59e0b] cursor-pointer"
+                    className="w-full p-2.5 glass-input text-white rounded-xl text-xs outline-none focus:border-[#14b8a6] cursor-pointer"
                     id="filter-program-select"
                   >
-                    <option value="All" className="bg-[#111113]">All Disciplines</option>
+                    <option value="All" className="bg-[#0c0f1d]">All Disciplines</option>
                     {uniquePrograms.map(p => (
-                      <option key={p} value={p} className="bg-[#111113]">{p}</option>
+                      <option key={p} value={p} className="bg-[#0c0f1d]">{p}</option>
                     ))}
                   </select>
                 </div>
@@ -1367,12 +1385,12 @@ export default function App() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full p-2.5 bg-[#18181b] border border-[#3f3f46] text-white rounded-xl text-xs outline-none focus:border-[#f59e0b] cursor-pointer"
+                    className="w-full p-2.5 glass-input text-white rounded-xl text-xs outline-none focus:border-[#14b8a6] cursor-pointer"
                     id="filter-status-select"
                   >
-                    <option value="All" className="bg-[#111113]">All Statuses</option>
-                    <option value="Admission 2026 Open" className="bg-[#111113]">Admissions Open</option>
-                    <option value="Admission Hold" className="bg-[#111113]">Admission Hold</option>
+                    <option value="All" className="bg-[#0c0f1d]">All Statuses</option>
+                    <option value="Admission 2026 Open" className="bg-[#0c0f1d]">Admissions Open</option>
+                    <option value="Admission Hold" className="bg-[#0c0f1d]">Admission Hold</option>
                   </select>
                 </div>
 
@@ -1382,13 +1400,13 @@ export default function App() {
                   <select
                     value={naacFilter}
                     onChange={(e) => setNaacFilter(e.target.value)}
-                    className="w-full p-2.5 bg-[#18181b] border border-[#3f3f46] text-white rounded-xl text-xs outline-none focus:border-[#f59e0b] cursor-pointer"
+                    className="w-full p-2.5 glass-input text-white rounded-xl text-xs outline-none focus:border-[#14b8a6] cursor-pointer"
                     id="filter-naac-select"
                   >
-                    <option value="All" className="bg-[#111113]">Any Grade (Applied/NA/A)</option>
-                    <option value="A" className="bg-[#111113]">Grade A or higher</option>
-                    <option value="A+" className="bg-[#111113]">Grade A+ or higher</option>
-                    <option value="A++" className="bg-[#111113]">Grade A++ strictly</option>
+                    <option value="All" className="bg-[#0c0f1d]">Any Grade (Applied/NA/A)</option>
+                    <option value="A" className="bg-[#0c0f1d]">Grade A or higher</option>
+                    <option value="A+" className="bg-[#0c0f1d]">Grade A+ or higher</option>
+                    <option value="A++" className="bg-[#0c0f1d]">Grade A++ strictly</option>
                   </select>
                 </div>
 
@@ -1396,7 +1414,7 @@ export default function App() {
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
                     <label className="text-xs font-semibold text-[#a1a1aa]">Max Tuition Limit</label>
-                    <span className="text-xs font-mono font-extrabold text-[#f59e0b]">
+                    <span className="text-xs font-mono font-extrabold text-[#14b8a6]">
                       {maxFeeFilter.toFixed(2)}L
                     </span>
                   </div>
@@ -1407,7 +1425,7 @@ export default function App() {
                     step="0.2"
                     value={maxFeeFilter}
                     onChange={(e) => setMaxFeeFilter(parseFloat(e.target.value))}
-                    className="w-full h-1.5 bg-[#27272a] rounded-lg appearance-none cursor-pointer accent-[#f59e0b]"
+                    className="w-full h-1.5 glass-pill rounded-lg appearance-none cursor-pointer accent-[#14b8a6]"
                     id="filter-fees-slider"
                   />
                   <div className="flex justify-between text-[8px] text-[#71717a] font-mono mt-1">
@@ -1420,14 +1438,14 @@ export default function App() {
             </div>
 
             {/* Filtered Results Table with Distance */}
-            <div className="border border-[#27272a] bg-[#111113] rounded-3xl shadow-lg overflow-hidden flex flex-col">
+            <div className="glass-panel rounded-3xl shadow-lg overflow-hidden flex flex-col">
               
               {/* Header block details */}
               <div className="p-6 pb-4 border-b border-[#27272a] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h3 className="font-sans font-bold text-white text-base flex items-center gap-2">
                     Suitable Campuses Found 
-                    <span className="text-xs font-mono bg-[#27272a] text-[#f59e0b] px-2.5 py-0.5 rounded-full font-bold">
+                    <span className="text-xs font-mono glass-pill text-[#14b8a6] px-2.5 py-0.5 rounded-full font-bold">
                       {processedColleges.length}
                     </span>
                   </h3>
@@ -1442,14 +1460,14 @@ export default function App() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full sm:w-auto p-1.5 bg-[#18181b] border border-[#3f3f46] text-white rounded-lg text-xs outline-none focus:border-[#f59e0b] cursor-pointer"
+                    className="w-full sm:w-auto p-1.5 glass-input text-white rounded-lg text-xs outline-none focus:border-[#14b8a6] cursor-pointer"
                     id="sort-colleges-select"
                   >
-                    <option value="name" className="bg-[#111113]">College Name</option>
-                    {searchedLocation && <option value="distance" className="bg-[#111113]">🛡️ Proximity Distance</option>}
-                    <option value="fee" className="bg-[#111113]">Low Tuition Fee</option>
-                    <option value="intake" className="bg-[#111113]">Intake Seat Count</option>
-                    <option value="placement" className="bg-[#111113]">Average Placement (LPA)</option>
+                    <option value="name" className="bg-[#0c0f1d]">College Name</option>
+                    {searchedLocation && <option value="distance" className="bg-[#0c0f1d]">🛡️ Proximity Distance</option>}
+                    <option value="fee" className="bg-[#0c0f1d]">Low Tuition Fee</option>
+                    <option value="intake" className="bg-[#0c0f1d]">Intake Seat Count</option>
+                    <option value="placement" className="bg-[#0c0f1d]">Average Placement (LPA)</option>
                   </select>
                 </div>
               </div>
@@ -1465,7 +1483,7 @@ export default function App() {
                         <th className="p-4">Est Batch Intakes</th>
                         <th className="p-4">Annual Fees</th>
                         <th className="p-4">NAAC Grade</th>
-                        {searchedLocation && <th className="p-4 text-[#f59e0b]">Distance</th>}
+                        {searchedLocation && <th className="p-4 text-[#14b8a6]">Distance</th>}
                         <th className="p-4 pr-6 text-center">Action</th>
                       </tr>
                     </thead>
@@ -1478,15 +1496,15 @@ export default function App() {
                           <tr
                             key={col.id}
                             className={`hover:bg-[#18181b]/50 transition-colors cursor-pointer ${
-                              isSelected ? 'bg-[#f59e0b]/5' : ''
+                              isSelected ? 'bg-[#14b8a6]/5' : ''
                             }`}
                             onClick={() => setSelectedCollege(col)}
                           >
                             <td className="p-4 pl-6">
-                              <div className="font-sans font-bold text-white group-hover:text-[#f59e0b] transition-colors flex items-center gap-1.5">
+                              <div className="font-sans font-bold text-white group-hover:text-[#14b8a6] transition-colors flex items-center gap-1.5">
                                 {col.name}
                                 {isClosest && (
-                                  <span className="text-[9px] font-mono bg-amber-500/10 text-[#f59e0b] px-1.5 py-0.5 rounded border border-amber-500/20">
+                                  <span className="text-[9px] font-mono bg-teal-500/10 text-[#14b8a6] px-1.5 py-0.5 rounded border border-teal-500/20">
                                     Nearest
                                   </span>
                                 )}
@@ -1507,7 +1525,7 @@ export default function App() {
                               <span className={`px-2 py-0.5 rounded-full font-bold text-[9px] border ${
                                 col.naacGrading.startsWith('A')
                                   ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                  : 'bg-[#27272a] text-[#71717a] border-[#3f3f46]'
+                                  : 'glass-pill text-[#71717a] border-[#3f3f46]'
                               }`}>
                                 {col.naacGrading}
                               </span>
@@ -1526,7 +1544,7 @@ export default function App() {
                                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all cursor-pointer ${
                                   isSelected
                                     ? 'bg-[#10b981] text-white hover:bg-[#059669]'
-                                    : 'bg-[#27272a] text-[#e4e4e7] hover:bg-[#3f3f46] hover:text-[#f59e0b] border border-[#3f3f46]'
+                                    : 'glass-pill text-[#e4e4e7] hover:bg-[#3f3f46] hover:text-[#14b8a6] border border-[#3f3f46]'
                                 }`}
                                 id={`select-${col.id}`}
                               >
@@ -1552,7 +1570,7 @@ export default function App() {
                       setNaacFilter('All');
                       setFocusOnlyFilter(false);
                     }}
-                    className="mt-3 text-[#f59e0b] hover:underline font-semibold cursor-pointer"
+                    className="mt-3 text-[#14b8a6] hover:underline font-semibold cursor-pointer"
                     id="btn-reset-all-filters"
                   >
                     Reset All Filters
@@ -1588,15 +1606,15 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="border border-[#27272a] bg-[#111113] shadow-lg rounded-3xl overflow-hidden p-6 lg:p-8"
+              className="glass-panel shadow-lg rounded-3xl overflow-hidden p-6 lg:p-8"
               id="details-panel"
             >
               <div className="flex flex-col lg:flex-row justify-between items-start gap-6 pb-6 border-b border-[#27272a]">
                 <div className="space-y-2">
-                  <span className="text-xs font-mono bg-[#27272a] border border-[#3f3f46] text-[#f59e0b] rounded-full py-0.5 px-3 font-semibold">
+                  <span className="text-xs font-mono glass-pill border border-[#3f3f46] text-[#14b8a6] rounded-full py-0.5 px-3 font-semibold">
                     ⭐ Campus Detail Inspector ({selectedCollege.region} India Sector)
                   </span>
-                  <h2 className="font-serif text-[#f59e0b] font-extrabold text-2xl lg:text-3xl tracking-tight">
+                  <h2 className="font-serif text-[#14b8a6] font-extrabold text-2xl lg:text-3xl tracking-tight">
                     {selectedCollege.name}
                   </h2>
                   <p className="text-[#a1a1aa] font-medium text-xs flex items-center gap-1">
@@ -1641,13 +1659,13 @@ export default function App() {
                   {/* Academic offering items */}
                   <div>
                     <h4 className="text-xs font-bold text-[#71717a] uppercase tracking-widest font-mono mb-3 flex items-center gap-1.5">
-                      <BookOpen className="w-4 h-4 text-[#f59e0b]" />
+                      <BookOpen className="w-4 h-4 text-[#14b8a6]" />
                       List of Approved Allied Programs Offered ({selectedCollege.programsCount})
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {selectedCollege.programsList.map((pr, idx) => (
-                        <div key={idx} className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl flex items-start gap-2.5 h-full hover:border-[#3f3f46] transition-all">
-                          <CheckCircle className="w-4 h-4 text-[#f59e0b] grow-0 shrink-0 mt-0.5" />
+                        <div key={idx} className="p-3 glass-input rounded-xl flex items-start gap-2.5 h-full hover:border-[#3f3f46] transition-all">
+                          <CheckCircle className="w-4 h-4 text-[#14b8a6] grow-0 shrink-0 mt-0.5" />
                           <div className="space-y-0.5">
                             <span className="font-sans font-bold text-[#e4e4e7] text-[11px] block leading-tight">{pr}</span>
                             <span className="font-mono text-[9px] text-[#a1a1aa] block leading-normal">{getCourseDescription(pr)}</span>
@@ -1662,7 +1680,7 @@ export default function App() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#27272a]">
                       <div className="space-y-1">
                         <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                          <ShieldCheck className="w-4 h-4 text-[#f59e0b]" />
+                          <ShieldCheck className="w-4 h-4 text-[#14b8a6]" />
                           👨‍👩‍👧‍👦 Parent & Student Advisory Board
                         </h4>
                         <p className="text-[#a1a1aa] text-[10.5px]">
@@ -1693,8 +1711,8 @@ export default function App() {
                             onClick={() => setParentTab(tab.id as any)}
                             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                               isCurrent 
-                                ? 'bg-[#f59e0b] text-black shadow-md' 
-                                : 'text-[#a1a1aa] hover:text-white hover:bg-[#27272a]/40'
+                                ? 'bg-[#14b8a6] text-black shadow-md' 
+                                : 'text-[#a1a1aa] hover:text-white hover:glass-pill/40'
                             }`}
                           >
                             <IconComponent className="w-3.5 h-3.5" />
@@ -1723,8 +1741,8 @@ export default function App() {
                             </div>
                           </div>
 
-                          <div className="p-4 bg-[#f59e0b]/5 border border-[#f59e0b]/15 rounded-xl space-y-2">
-                            <h5 className="font-sans font-semibold text-[#f59e0b] flex items-center gap-1.5 text-[11px]">
+                          <div className="p-4 bg-[#14b8a6]/5 border border-[#14b8a6]/15 rounded-xl space-y-2">
+                            <h5 className="font-sans font-semibold text-[#14b8a6] flex items-center gap-1.5 text-[11px]">
                               ℹ️ Scholarship & Loan Facilitation for Parents
                             </h5>
                             <div className="space-y-1 mt-1 text-[11px] text-[#a1a1aa] leading-relaxed">
@@ -1746,7 +1764,7 @@ export default function App() {
                               <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block">Annual Hostel Pricing</span>
                               <p className="text-white font-medium">{selectedCollege.hostelAvailable}</p>
                               <p className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                <strong className="text-[#f59e0b]">Capacity:</strong> {CONTACT_AND_HELP_INFO[selectedCollege.id]?.hostelCapacity || "Co-ed blocks available on campus, separate boys and girls wings."}
+                                <strong className="text-[#14b8a6]">Capacity:</strong> {CONTACT_AND_HELP_INFO[selectedCollege.id]?.hostelCapacity || "Co-ed blocks available on campus, separate boys and girls wings."}
                               </p>
                             </div>
 
@@ -1762,7 +1780,7 @@ export default function App() {
                           </div>
 
                           <div className="p-4 bg-[#18181b]/50 border border-[#27272a] rounded-xl flex items-start gap-3">
-                            <div className="p-2 bg-[#27272a] rounded-lg mt-0.5 shrink-0 text-[#f59e0b]">
+                            <div className="p-2 glass-pill rounded-lg mt-0.5 shrink-0 text-[#14b8a6]">
                               <Compass className="w-4 h-4" />
                             </div>
                             <div className="space-y-1">
@@ -1789,7 +1807,7 @@ export default function App() {
 
                             <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
                               <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block">Career Placement ROI</span>
-                              <p className="text-[#f59e0b] font-bold font-mono text-xs">{selectedCollege.roi}</p>
+                              <p className="text-[#14b8a6] font-bold font-mono text-xs">{selectedCollege.roi}</p>
                               <span className="text-[10px] text-[#a1a1aa] block">Average Placement packages around ₹{selectedCollege.avgPlacementPackage.toFixed(2)} LPA.</span>
                             </div>
                           </div>
@@ -1805,8 +1823,8 @@ export default function App() {
 
                       {parentTab === 'contact' && (
                         <div className="space-y-4">
-                          <div className="p-4 bg-[#f59e0b]/5 border border-[#f59e0b]/15 rounded-xl">
-                            <h5 className="font-bold text-[#f59e0b] mb-2 flex items-center gap-1 text-xs">
+                          <div className="p-4 bg-[#14b8a6]/5 border border-[#14b8a6]/15 rounded-xl">
+                            <h5 className="font-bold text-[#14b8a6] mb-2 flex items-center gap-1 text-xs">
                               📞 Authorized Campus Helplines & Field Support
                             </h5>
                             <p className="text-[11px] text-[#a1a1aa] mb-3 leading-relaxed">
@@ -1814,29 +1832,29 @@ export default function App() {
                             </p>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2 font-mono text-[10px]">
-                              <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl space-y-1 text-[#e4e4e7]">
+                              <div className="p-3 glass-input rounded-xl space-y-1 text-[#e4e4e7]">
                                 <span className="text-[#71717a] text-[9px] block uppercase font-bold">University Partner</span>
                                 <strong className="text-white block">{selectedCollege.universityOwner.split('(')[0].trim()}</strong>
                                 {selectedCollege.universityOwner.includes('(') && (
-                                  <a href={`tel:${selectedCollege.universityOwner.match(/\(([^)]+)\)/)?.[1] || ''}`} className="text-[#f59e0b] hover:underline font-bold flex items-center gap-1 mt-1">
-                                    <Phone className="w-3 h-3 text-[#f59e0b]" />
+                                  <a href={`tel:${selectedCollege.universityOwner.match(/\(([^)]+)\)/)?.[1] || ''}`} className="text-[#14b8a6] hover:underline font-bold flex items-center gap-1 mt-1">
+                                    <Phone className="w-3 h-3 text-[#14b8a6]" />
                                     {selectedCollege.universityOwner.match(/\(([^)]+)\)/)?.[1] || ''}
                                   </a>
                                 )}
                               </div>
 
-                              <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl space-y-1 text-[#e4e4e7]">
+                              <div className="p-3 glass-input rounded-xl space-y-1 text-[#e4e4e7]">
                                 <span className="text-[#71717a] text-[9px] block uppercase font-bold">Active Campus Manager</span>
                                 <strong className="text-white block">{selectedCollege.campusManager.split('(')[0].trim()}</strong>
                                 {selectedCollege.campusManager.includes('(') && (
-                                  <a href={`tel:${selectedCollege.campusManager.match(/\(([^)]+)\)/)?.[1] || ''}`} className="text-[#f59e0b] hover:underline font-bold flex items-center gap-1 mt-1">
-                                    <Phone className="w-3 h-3 text-[#f59e0b]" />
+                                  <a href={`tel:${selectedCollege.campusManager.match(/\(([^)]+)\)/)?.[1] || ''}`} className="text-[#14b8a6] hover:underline font-bold flex items-center gap-1 mt-1">
+                                    <Phone className="w-3 h-3 text-[#14b8a6]" />
                                     {selectedCollege.campusManager.match(/\(([^)]+)\)/)?.[1] || ''}
                                   </a>
                                 )}
                               </div>
 
-                              <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl space-y-1 text-[#e4e4e7]">
+                              <div className="p-3 glass-input rounded-xl space-y-1 text-[#e4e4e7]">
                                 <span className="text-[#71717a] text-[9px] block uppercase font-bold">Field Support Team (FST)</span>
                                 <p className="text-white font-sans text-[10px] font-semibold">
                                   {CONTACT_AND_HELP_INFO[selectedCollege.id]?.fst.split(' / ')[0] || "Authorized Emversity Support Network"}
@@ -1850,9 +1868,9 @@ export default function App() {
                             </div>
                           </div>
 
-                          <div className="p-3 bg-[#18181b] border border-[#27272a] rounded-xl flex justify-between items-center text-[#71717a] text-[10px]">
+                          <div className="p-3 glass-input rounded-xl flex justify-between items-center text-[#71717a] text-[10px]">
                             <span>Institutional Relations Head (ISM Manager):</span>
-                            <span className="text-[#e4e4e7] font-bold uppercase tracking-wider font-mono bg-[#27272a] px-2.5 py-0.5 rounded-md text-[9px]">
+                            <span className="text-[#e4e4e7] font-bold uppercase tracking-wider font-mono glass-pill px-2.5 py-0.5 rounded-md text-[9px]">
                               {CONTACT_AND_HELP_INFO[selectedCollege.id]?.ism || "Rahul (Authorized)"}
                             </span>
                           </div>
@@ -1861,9 +1879,9 @@ export default function App() {
 
                       {parentTab === 'csv_specs' && augCollege && (
                         <div className="space-y-4">
-                          <div className="p-4 bg-[#f59e0b]/5 border border-[#f59e0b]/15 rounded-xl">
-                            <h5 className="font-bold text-[#f59e0b] mb-1.5 flex items-center gap-1.5 text-xs">
-                              <Sparkles className="w-4 h-4 text-[#f59e0b]" />
+                          <div className="p-4 bg-[#14b8a6]/5 border border-[#14b8a6]/15 rounded-xl">
+                            <h5 className="font-bold text-[#14b8a6] mb-1.5 flex items-center gap-1.5 text-xs">
+                              <Sparkles className="w-4 h-4 text-[#14b8a6]" />
                               Comprehensive Compliance Specifications (main.csv Repo)
                             </h5>
                             <p className="text-[11px] text-[#a1a1aa] leading-relaxed font-sans">
@@ -1899,7 +1917,7 @@ export default function App() {
 
                             <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1 md:col-span-2">
                               <span className="text-[10px] font-mono uppercase text-[#71717a] font-bold block font-sans">📊 Year On Year Fee Schedule</span>
-                              <p className="text-[#f59e0b] font-mono font-medium text-xs leading-relaxed">{augCollege.yearOnYearFees || "Tuition fee structure is spread even across standard academic semestrals."}</p>
+                              <p className="text-[#14b8a6] font-mono font-medium text-xs leading-relaxed">{augCollege.yearOnYearFees || "Tuition fee structure is spread even across standard academic semestrals."}</p>
                             </div>
 
                             <div className="p-4 bg-[#18181b] rounded-xl border border-[#27272a] space-y-1">
@@ -1922,7 +1940,7 @@ export default function App() {
                                   href={augCollege.universityWebsiteLink}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex-grow py-2 px-3 text-center bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] border border-[#3f3f46] rounded-lg font-semibold text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+                                  className="flex-grow py-2 px-3 text-center glass-pill hover:bg-[#3f3f46] text-[#e4e4e7] border border-[#3f3f46] rounded-lg font-semibold text-[11px] flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
                                   University Main Portal
@@ -1933,9 +1951,9 @@ export default function App() {
                                   href={augCollege.emversityWebsiteLink}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex-grow py-2 px-3 text-center bg-[#f59e0b]/10 hover:bg-[#f59e0b]/20 text-[#f59e0b] border border-[#f59e0b]/20 rounded-lg font-semibold text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+                                  className="flex-grow py-2 px-3 text-center bg-[#14b8a6]/10 hover:bg-[#14b8a6]/20 text-[#14b8a6] border border-[#14b8a6]/20 rounded-lg font-semibold text-[11px] flex items-center justify-center gap-1 cursor-pointer"
                                 >
-                                  <Sparkles className="w-3.5 h-3.5 text-[#f59e0b]" />
+                                  <Sparkles className="w-3.5 h-3.5 text-[#14b8a6]" />
                                   Emversity Affiliation Page
                                 </a>
                               )}
@@ -1956,7 +1974,7 @@ export default function App() {
                   {selectedCollege.campusVideo ? (
                     <div>
                       <h4 className="text-xs font-bold text-[#71717a] uppercase tracking-widest font-mono mb-3 flex items-center gap-1.5">
-                        <Tv className="w-4 h-4 text-[#f59e0b]" />
+                        <Tv className="w-4 h-4 text-[#14b8a6]" />
                         Explore Campus Tour Video
                       </h4>
                       <div className="relative aspect-video rounded-2xl overflow-hidden border border-[#27272a] shadow-lg bg-[#18181b]">
@@ -1981,7 +1999,7 @@ export default function App() {
                   )}
 
                   {/* Highlights checklist details */}
-                  <div className="p-5 bg-[#18181b] border border-[#27272a] rounded-2xl space-y-4">
+                  <div className="p-5 glass-input rounded-2xl space-y-4">
                     <div>
                       <h5 className="text-[10px] uppercase font-bold text-[#71717a] font-mono tracking-widest">
                         Academic Specifications
@@ -1997,7 +2015,7 @@ export default function App() {
                         </li>
                         <li className="flex justify-between border-b border-[#27272a] pb-1.5 text-[#a1a1aa]">
                           <span className="font-medium">NAAC Grade Value:</span>
-                          <span className="font-semibold text-[#f59e0b]">{selectedCollege.naacGrading} Certified</span>
+                          <span className="font-semibold text-[#14b8a6]">{selectedCollege.naacGrading} Certified</span>
                         </li>
                       </ul>
                     </div>
@@ -2082,7 +2100,7 @@ export default function App() {
       </main>
 
       {/* Structured Footer */}
-      <footer className="mt-16 border-t border-[#27272a] bg-[#09090b] py-12 text-[#71717a] text-xs text-center font-mono">
+      <footer className="mt-16 border-t border-[#27272a] bg-[#05070f] py-12 text-[#71717a] text-xs text-center font-mono">
         <div className="max-w-7xl mx-auto px-4 space-y-3 font-sans">
           <p className="font-sans font-medium text-[#a1a1aa]">
             © 2026 Emversity Campus Navigator. All rights reserved by Muzaffar Munshi.

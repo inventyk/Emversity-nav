@@ -26,85 +26,85 @@ export default function MetricCards({ colleges }: MetricCardsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {/* card 1 */}
-      <div className="relative border border-[#27272a] bg-[#111113] rounded-2xl p-5 shadow-lg overflow-hidden flex flex-col justify-between group hover:border-[#f59e0b]/40 transition-colors duration-300">
+      <div className="relative glass-panel glass-panel-hover rounded-2xl p-5 overflow-hidden flex flex-col justify-between group">
         <div className="flex justify-between items-start mb-2">
           <span className="text-xs font-semibold text-[#a1a1aa]">Listed Campuses</span>
-          <span className="p-1 px-2.5 text-[10px] rounded-full font-bold bg-[#27272a] text-[#f59e0b] border border-[#f59e0b]/20">
+          <span className="p-1 px-2.5 text-[10px] rounded-full font-bold bg-[#0d9488]/10 text-teal-400 border border-[#14b8a6]/20 font-mono">
             {openAdmissions} Open
           </span>
         </div>
         <div className="mt-2">
-          <span className="font-sans font-extrabold text-[#e4e4e7] text-2xl lg:text-3xl tracking-tight">
+          <span className="font-sans font-extrabold text-white text-2xl lg:text-3xl tracking-tight">
             {colleges.length}
           </span>
-          <span className="text-[#10b981] text-[10px] block font-mono mt-1">
+          <span className="text-teal-400/80 text-[10px] block font-mono mt-1">
             Across {statesCount} Indian States
           </span>
         </div>
-        <div className="absolute right-[-10px] bottom-[-10px] opacity-5 text-white group-hover:scale-110 transition-transform duration-300">
+        <div className="absolute right-[-10px] bottom-[-10px] opacity-10 text-teal-500/20 group-hover:scale-110 group-hover:text-teal-400/30 transition-all duration-300">
           <Building2 className="w-20 h-20" />
         </div>
       </div>
 
       {/* card 2 */}
-      <div className="relative border border-[#27272a] bg-[#111113] rounded-2xl p-5 shadow-lg overflow-hidden flex flex-col justify-between group hover:border-[#f59e0b]/40 transition-colors duration-300">
+      <div className="relative glass-panel glass-panel-hover rounded-2xl p-5 overflow-hidden flex flex-col justify-between group">
         <div className="flex justify-between items-start mb-2">
           <span className="text-xs font-semibold text-[#a1a1aa]">Allied Programs Offered</span>
-          <span className="p-1.5 rounded-lg bg-[#27272a] text-[#f59e0b]">
+          <span className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/10">
             <GraduationCap className="w-3.5 h-3.5" />
           </span>
         </div>
         <div className="mt-2">
-          <span className="font-sans font-extrabold text-[#e4e4e7] text-2xl lg:text-3xl tracking-tight">
+          <span className="font-sans font-extrabold text-white text-2xl lg:text-3xl tracking-tight">
             {distinctPrograms}
           </span>
           <span className="text-[#a1a1aa] text-[10px] block font-mono mt-1">
             Across B.AOTT, CVT, BPT, etc.
           </span>
         </div>
-        <div className="absolute right-[-10px] bottom-[-10px] opacity-5 text-white group-hover:scale-110 transition-transform duration-300">
+        <div className="absolute right-[-10px] bottom-[-10px] opacity-10 text-teal-500/20 group-hover:scale-110 group-hover:text-teal-400/30 transition-all duration-300">
           <GraduationCap className="w-20 h-20" />
         </div>
       </div>
 
       {/* card 3 */}
-      <div className="relative border border-[#27272a] bg-[#111113] rounded-2xl p-5 shadow-lg overflow-hidden flex flex-col justify-between group hover:border-[#f59e0b]/40 transition-colors duration-300">
+      <div className="relative glass-panel glass-panel-hover rounded-2xl p-5 overflow-hidden flex flex-col justify-between group">
         <div className="flex justify-between items-start mb-2">
           <span className="text-xs font-semibold text-[#a1a1aa]">Cumulative Seat Intake</span>
-          <span className="p-1.5 rounded-lg bg-[#27272a] text-[#f59e0b]">
+          <span className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/10">
             <Building2 className="w-3.5 h-3.5" />
           </span>
         </div>
         <div className="mt-2">
-          <span className="font-sans font-extrabold text-[#e4e4e7] text-2xl lg:text-3xl tracking-tight">
+          <span className="font-sans font-extrabold text-white text-2xl lg:text-3xl tracking-tight">
             {totalIntake.toLocaleString()}
           </span>
           <span className="text-[#a1a1aa] text-[10px] block font-mono mt-1">
             Seats Open For 2026 Batch
           </span>
         </div>
-        <div className="absolute right-[-10px] bottom-[-10px] opacity-5 text-white group-hover:scale-110 transition-transform duration-300">
+        <div className="absolute right-[-10px] bottom-[-10px] opacity-10 text-teal-500/20 group-hover:scale-110 group-hover:text-teal-400/30 transition-all duration-300">
           <Award className="w-20 h-20" />
         </div>
       </div>
 
       {/* card 4 */}
-      <div className="relative border border-[#27272a] bg-[#111113] rounded-2xl p-5 shadow-lg overflow-hidden flex flex-col justify-between group hover:border-[#f59e0b]/40 transition-colors duration-300">
+      <div className="relative glass-panel glass-panel-hover rounded-2xl p-5 overflow-hidden flex flex-col justify-between group">
         <div className="flex justify-between items-start mb-2">
           <span className="text-xs font-semibold text-[#a1a1aa]">Top Average Package</span>
-          <span className="p-1.5 rounded-lg bg-[#27272a] text-[#f59e0b]">
+          <span className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/10">
             <Award className="w-3.5 h-3.5" />
           </span>
         </div>
         <div className="mt-2">
-          <span className="font-sans font-extrabold text-[#e4e4e7] text-2xl lg:text-3xl tracking-tight">
+          <span className="font-sans font-extrabold text-white text-2xl lg:text-3xl tracking-tight">
             {maxRoi.toFixed(1)} LPA
           </span>
-          <span className="text-[#f59e0b] text-[10px] block font-mono mt-1">
+          <span className="text-teal-400 text-[10px] block font-mono mt-1">
             Max Average Recorded Placement
           </span>
         </div>
-        <div className="absolute right-[-10px] bottom-[-10px] opacity-5 text-white group-hover:scale-110 transition-transform duration-300">
+        <div className="absolute right-[-10px] bottom-[-10px] opacity-10 text-teal-500/20 group-hover:scale-110 group-hover:text-teal-400/30 transition-all duration-300">
           <MapPin className="w-20 h-20" />
         </div>
       </div>
